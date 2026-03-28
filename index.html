@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Randy Ops Dashboard</title>
+  <title>Randy Command Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -59,7 +59,7 @@
     }
 
     .shell {
-      max-width: 1320px;
+      max-width: 1360px;
       margin: 0 auto;
       padding: 28px 20px 56px;
       position: relative;
@@ -185,7 +185,7 @@
       margin: 0 0 10px;
       font-size: clamp(1.8rem, 2vw + 1rem, 3.3rem);
       line-height: 1.02;
-      max-width: 12ch;
+      max-width: 13ch;
     }
 
     .hero p {
@@ -510,6 +510,12 @@
       gap: 16px;
     }
 
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+
     .section {
       background: var(--panel);
       border: 1px solid var(--line);
@@ -524,20 +530,20 @@
       letter-spacing: 0.02em;
     }
 
-    .grocery-grid {
+    .grocery-grid, .debt-grid, .travel-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 12px;
     }
 
-    .grocery-cat {
+    .grocery-cat, .debt-card, .travel-card, .snapshot-card, .goal-card {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 18px;
       padding: 14px;
     }
 
-    .grocery-item, .bill-item, .event-item {
+    .grocery-item, .bill-item, .event-item, .debt-row, .timeline-row, .reminder-row, .goal-row {
       display: flex;
       gap: 10px;
       align-items: flex-start;
@@ -545,7 +551,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.07);
     }
 
-    .grocery-item:last-child, .bill-item:last-child, .event-item:last-child { border-bottom: none; }
+    .grocery-item:last-child, .bill-item:last-child, .event-item:last-child, .debt-row:last-child, .timeline-row:last-child, .reminder-row:last-child, .goal-row:last-child { border-bottom: none; }
 
     .grocery-item label {
       flex: 1;
@@ -568,14 +574,14 @@
       flex-shrink: 0;
     }
 
-    .bill-main, .event-main { flex: 1; }
+    .bill-main, .event-main, .debt-main, .timeline-main, .reminder-main, .goal-main { flex: 1; }
 
-    .bill-name, .event-name {
+    .bill-name, .event-name, .debt-name, .timeline-name, .reminder-name, .goal-name {
       font-weight: 700;
       margin-bottom: 4px;
     }
 
-    .bill-sub, .event-sub {
+    .bill-sub, .event-sub, .debt-sub, .timeline-sub, .reminder-sub, .goal-sub {
       color: var(--muted);
       font-size: 0.85rem;
     }
@@ -595,6 +601,8 @@
     .paid { color: var(--success); background: rgba(102,213,139,0.14); }
     .upcoming { color: var(--warn); background: rgba(255,190,102,0.14); }
     .overdue { color: var(--danger); background: rgba(255,125,138,0.14); }
+    .good { color: var(--success); background: rgba(102,213,139,0.14); }
+    .travel { color: var(--accent-3); background: rgba(186,140,255,0.14); }
 
     .calendar {
       background: rgba(255,255,255,0.04);
@@ -701,6 +709,21 @@
       font-size: 0.92rem;
     }
 
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
     .empty-state {
       text-align: center;
       padding: 28px 14px;
@@ -752,7 +775,7 @@
     }
 
     @media (max-width: 1080px) {
-      .hero, .grid-2 { grid-template-columns: 1fr; }
+      .hero, .grid-2, .grid-3 { grid-template-columns: 1fr; }
       .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
@@ -771,8 +794,8 @@
   <div class="loading" id="loadingOverlay">
     <div class="loading-card">
       <div class="spinner"></div>
-      <h3 style="margin:0 0 8px; font-size:1.1rem;">Booting Randy Ops Dashboard</h3>
-      <div style="color: var(--muted);">Pulling your tasks, calendar, notes, and money stuff into one clean command center.</div>
+      <h3 style="margin:0 0 8px; font-size:1.1rem;">Booting Randy Command Center</h3>
+      <div style="color: var(--muted);">Loading your day, money, trips, and reminders into one clean command center.</div>
       <div class="helper">Syncing with your Apps Script endpoint…</div>
     </div>
   </div>
@@ -782,8 +805,8 @@
       <div class="brand">
         <div class="brand-mark">R//</div>
         <div class="brand-copy">
-          <h1>Randy Ops Dashboard</h1>
-          <p>Personal command center for priorities, bills, groceries, notes, and real-life admin.</p>
+          <h1>Randy Command Center</h1>
+          <p>Ops dashboard, money dashboard, and travel-life planner in one place.</p>
         </div>
       </div>
       <div class="topbar-right">
@@ -794,32 +817,32 @@
 
     <section class="hero">
       <div class="card hero-main">
-        <div class="eyebrow">▲ Focus mode on</div>
-        <h2>Run your day instead of letting it run you.</h2>
+        <div class="eyebrow">▲ Personal HQ online</div>
+        <h2>Money dialed in. Travel mapped out. Life less chaotic.</h2>
         <p>
-          This build keeps the bones of your original dashboard but levels it up into something that feels sharper, more personal, and more useful. It gives you a clean ops-style overview, faster inputs, cleaner forms, better visual hierarchy, and a layout that actually feels premium.
+          This version adds two stronger modes: a finance view with debt tracking and payment snapshots, and a travel + life planning zone for reminders, itinerary, and goals. Same clean engine underneath, way more useful on the day-to-day.
         </p>
         <div class="hero-actions">
-          <button class="btn primary" onclick="quickAddTask()">+ Quick add task</button>
-          <button class="btn" onclick="switchTab('bills')">Open bills & calendar</button>
-          <button class="btn" onclick="switchTab('notes')">Capture an idea</button>
+          <button class="btn primary" onclick="switchTab('finance')">Open finance mode</button>
+          <button class="btn" onclick="switchTab('travel')">Open travel + life</button>
+          <button class="btn" onclick="quickAddTask()">+ Quick add task</button>
         </div>
       </div>
       <div class="card hero-side">
         <div class="mini-stat">
-          <div class="label">Tasks still open</div>
+          <div class="label">Open tasks</div>
           <div class="value" id="statTasks">0</div>
-          <div class="sub">Across daily, short-term, and long-term boards</div>
+          <div class="sub">Stuff still on your plate</div>
         </div>
         <div class="mini-stat">
-          <div class="label">Upcoming bills</div>
-          <div class="value" id="statBills">$0</div>
-          <div class="sub">Unpaid or due soon</div>
+          <div class="label">Debt remaining</div>
+          <div class="value" id="statDebt">$0</div>
+          <div class="sub">Tracked balances across cards and loans</div>
         </div>
         <div class="mini-stat">
-          <div class="label">Events this month</div>
-          <div class="value" id="statEvents">0</div>
-          <div class="sub">Keep the important stuff from slipping</div>
+          <div class="label">Travel reminders</div>
+          <div class="value" id="statTravel">0</div>
+          <div class="sub">Things you do not want to forget</div>
         </div>
       </div>
     </section>
@@ -830,6 +853,8 @@
       <button class="tab active" data-tab="daily" onclick="switchTab('daily')">Daily Tasks</button>
       <button class="tab" data-tab="short" onclick="switchTab('short')">Short-Term Goals</button>
       <button class="tab" data-tab="long" onclick="switchTab('long')">Long-Term Vision</button>
+      <button class="tab" data-tab="finance" onclick="switchTab('finance')">Finance Mode</button>
+      <button class="tab" data-tab="travel" onclick="switchTab('travel')">Travel + Life</button>
       <button class="tab" data-tab="grocery" onclick="switchTab('grocery')">Grocery List</button>
       <button class="tab" data-tab="bills" onclick="switchTab('bills')">Bills & Calendar</button>
       <button class="tab" data-tab="notes" onclick="switchTab('notes')">Notes / Ideas</button>
@@ -839,6 +864,8 @@
       <section class="panel active" id="panel-daily"></section>
       <section class="panel" id="panel-short"></section>
       <section class="panel" id="panel-long"></section>
+      <section class="panel" id="panel-finance"></section>
+      <section class="panel" id="panel-travel"></section>
       <section class="panel" id="panel-grocery"></section>
       <section class="panel" id="panel-bills"></section>
       <section class="panel" id="panel-notes"></section>
@@ -887,11 +914,7 @@
       grocery: {
         Produce: [{ name: 'Apples', done: false }],
         Dairy: [{ name: 'Milk', done: false }],
-        Meat: [],
-        Pantry: [],
-        Frozen: [],
-        Beverages: [],
-        Other: []
+        Meat: [], Pantry: [], Frozen: [], Beverages: [], Other: []
       },
       bills: [
         { name: 'Mortgage', amt: '$1,681', due: 'Apr 1', status: 'due-soon' },
@@ -909,6 +932,33 @@
         { title: 'Travel', body: 'Keep a shortlist of places worth visiting that are actually walkable and low-stress.', color: 'purple' },
         { title: 'Health', body: 'Night walks. Water. Better sleep. Nothing fancy, just consistent.', color: 'green' }
       ],
+      debts: [
+        { name: 'PayPal', balance: 2200, rate: 33.99, minimum: 80, paid: 0 },
+        { name: 'Synchrony', balance: 1650, rate: 33.99, minimum: 160, paid: 0 },
+        { name: 'Amazon', balance: 4500, rate: 29.74, minimum: 125, paid: 0 }
+      ],
+      paymentSnapshots: [
+        { label: 'Minimums', amount: 365, note: 'Current required monthly outflow' },
+        { label: 'Target paydown', amount: 600, note: 'Monthly push if you go aggressive' },
+        { label: 'Highest APR', amount: 33.99, note: 'Rate dragging hardest on progress' }
+      ],
+      travel: {
+        reminders: [
+          { name: 'Book airport parking', when: '2 weeks before trip' },
+          { name: 'Check passport / ID', when: '1 month before travel' },
+          { name: 'Confirm hotel and transfer', when: '7 days before' }
+        ],
+        itinerary: [
+          { day: 'Arrival', title: 'Land, hotel check-in, light walk', detail: 'Keep first day low-stress and easy' },
+          { day: 'Day 2', title: 'Main museum or historic site', detail: 'Front-load the high-value stop' },
+          { day: 'Day 3', title: 'Neighborhood wandering and dinner', detail: 'Slow day, less rushing, more vibe' }
+        ],
+        goals: [
+          { name: 'Keep travel costs under budget', progress: 60, note: 'Watch airfare, hotel, and food drift' },
+          { name: 'Take more walks at night', progress: 35, note: 'Health goal that also helps unwind' },
+          { name: 'Plan one memorable dinner', progress: 80, note: 'Something worth dressing up for' }
+        ]
+      },
       calYear: new Date().getFullYear(),
       calMonth: new Date().getMonth()
     };
@@ -921,11 +971,13 @@
     let noteFormOpen = false;
     let billFormOpen = false;
     let eventFormOpen = false;
+    let debtFormOpen = false;
+    let reminderFormOpen = false;
+    let itineraryFormOpen = false;
+    let goalFormOpen = false;
     let taskSearch = '';
 
-    function deepClone(value) {
-      return JSON.parse(JSON.stringify(value));
-    }
+    function deepClone(value) { return JSON.parse(JSON.stringify(value)); }
 
     function esc(str) {
       return String(str)
@@ -991,6 +1043,12 @@
       merged.bills = Array.isArray(loaded.bills) ? loaded.bills : merged.bills;
       merged.events = Array.isArray(loaded.events) ? loaded.events : merged.events;
       merged.notes = Array.isArray(loaded.notes) ? loaded.notes : merged.notes;
+      merged.debts = Array.isArray(loaded.debts) ? loaded.debts : merged.debts;
+      merged.paymentSnapshots = Array.isArray(loaded.paymentSnapshots) ? loaded.paymentSnapshots : merged.paymentSnapshots;
+      merged.travel = Object.assign({}, merged.travel, loaded.travel || {});
+      ['reminders','itinerary','goals'].forEach(key => {
+        if (!Array.isArray(merged.travel[key])) merged.travel[key] = deepClone(DEFAULT_STATE.travel[key]);
+      });
       merged.calYear = Number.isInteger(loaded.calYear) ? loaded.calYear : merged.calYear;
       merged.calMonth = Number.isInteger(loaded.calMonth) ? loaded.calMonth : merged.calMonth;
       return merged;
@@ -1015,12 +1073,8 @@
 
     function switchTab(name) {
       currentTab = name;
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.toggle('active', tab.dataset.tab === name);
-      });
-      document.querySelectorAll('.panel').forEach(panel => {
-        panel.classList.toggle('active', panel.id === `panel-${name}`);
-      });
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.tab === name));
+      document.querySelectorAll('.panel').forEach(panel => panel.classList.toggle('active', panel.id === `panel-${name}`));
       renderCurrentPanel();
     }
 
@@ -1033,52 +1087,51 @@
     function renderSummary() {
       const stats = getDashboardStats();
       document.getElementById('statTasks').textContent = stats.openTasks;
-      document.getElementById('statBills').textContent = stats.upcomingBillTotal;
-      document.getElementById('statEvents').textContent = stats.monthEvents;
+      document.getElementById('statDebt').textContent = money(stats.totalDebt);
+      document.getElementById('statTravel').textContent = stats.travelReminders;
 
       document.getElementById('summaryGrid').innerHTML = `
         <div class="summary-card">
-          <div class="label">Daily focus</div>
-          <div class="value">${stats.dailyOpen}</div>
-          <div class="sub">Open items on your day board</div>
+          <div class="label">Monthly minimums</div>
+          <div class="value">${money(stats.totalMinimums)}</div>
+          <div class="sub">What your tracked debt wants every month</div>
         </div>
         <div class="summary-card">
-          <div class="label">Groceries checked</div>
-          <div class="value">${stats.groceryDone}%</div>
-          <div class="sub">Progress on your current list</div>
+          <div class="label">Upcoming bills</div>
+          <div class="value">${money(stats.upcomingBills)}</div>
+          <div class="sub">Unpaid or due-soon bills on deck</div>
         </div>
         <div class="summary-card">
-          <div class="label">Captured notes</div>
-          <div class="value">${state.notes.length}</div>
-          <div class="sub">Ideas, reminders, and stuff you don’t want to lose</div>
+          <div class="label">Trip / life goals</div>
+          <div class="value">${stats.goalAverage}%</div>
+          <div class="sub">Average progress across current goals</div>
         </div>
         <div class="summary-card">
-          <div class="label">System status</div>
-          <div class="value">Stable</div>
-          <div class="sub">Clean UI, local state, and Google Apps Script sync</div>
+          <div class="label">Events this month</div>
+          <div class="value">${stats.monthEvents}</div>
+          <div class="sub">Calendar items keeping the month honest</div>
         </div>
       `;
     }
 
     function getDashboardStats() {
-      const openTasks = ['daily','short','long'].reduce((sum, board) => {
-        return sum + state.boards[board].todo.length + state.boards[board].doing.length;
-      }, 0);
-      const dailyOpen = state.boards.daily.todo.length + state.boards.daily.doing.length;
-      const upcomingBills = state.bills.filter(b => b.status !== 'paid');
-      const total = upcomingBills.reduce((sum, bill) => sum + parseMoney(bill.amt), 0);
+      const openTasks = ['daily','short','long'].reduce((sum, board) => sum + state.boards[board].todo.length + state.boards[board].doing.length, 0);
+      const totalDebt = state.debts.reduce((sum, debt) => sum + Number(debt.balance || 0), 0);
+      const totalMinimums = state.debts.reduce((sum, debt) => sum + Number(debt.minimum || 0), 0);
+      const upcomingBills = state.bills.filter(b => b.status !== 'paid').reduce((sum, bill) => sum + parseMoney(bill.amt), 0);
       const monthEvents = state.events.filter(ev => {
         const d = new Date(ev.date + 'T00:00:00');
         return d.getMonth() === state.calMonth && d.getFullYear() === state.calYear;
       }).length;
-      const groceryItems = Object.values(state.grocery).flat();
-      const doneItems = groceryItems.filter(item => item.done).length;
+      const goalAverage = state.travel.goals.length ? Math.round(state.travel.goals.reduce((sum, goal) => sum + Number(goal.progress || 0), 0) / state.travel.goals.length) : 0;
       return {
         openTasks,
-        dailyOpen,
-        upcomingBillTotal: money(total),
+        totalDebt,
+        totalMinimums,
+        upcomingBills,
         monthEvents,
-        groceryDone: groceryItems.length ? Math.round((doneItems / groceryItems.length) * 100) : 0
+        goalAverage,
+        travelReminders: state.travel.reminders.length
       };
     }
 
@@ -1093,6 +1146,8 @@
 
     function renderCurrentPanel() {
       if (['daily','short','long'].includes(currentTab)) renderBoard(currentTab);
+      if (currentTab === 'finance') renderFinance();
+      if (currentTab === 'travel') renderTravel();
       if (currentTab === 'grocery') renderGrocery();
       if (currentTab === 'bills') renderBillsAndCalendar();
       if (currentTab === 'notes') renderNotes();
@@ -1104,12 +1159,7 @@
 
     function renderBoard(board) {
       const panel = document.getElementById(`panel-${board}`);
-      const cols = [
-        ['todo', 'To Do'],
-        ['doing', 'In Progress'],
-        ['done', 'Done']
-      ];
-
+      const cols = [['todo', 'To Do'], ['doing', 'In Progress'], ['done', 'Done']];
       panel.innerHTML = `
         <div class="panel-head">
           <div class="panel-title">${boardLabel(board)}</div>
@@ -1118,25 +1168,15 @@
             <button class="btn" onclick="openBoardForm('${board}','todo')">+ Add task</button>
           </div>
         </div>
-        <div class="kanban">
-          ${cols.map(([col, label]) => renderColumn(board, col, label)).join('')}
-        </div>
+        <div class="kanban">${cols.map(([col, label]) => renderColumn(board, col, label)).join('')}</div>
       `;
     }
 
-    function updateTaskSearch(value) {
-      taskSearch = value || '';
-      renderBoard(currentTab);
-    }
+    function updateTaskSearch(value) { taskSearch = value || ''; renderBoard(currentTab); }
 
     function renderColumn(board, col, label) {
-      const tasks = state.boards[board][col].filter(task => {
-        if (!taskSearch.trim()) return true;
-        return `${task.t} ${task.d} ${task.p}`.toLowerCase().includes(taskSearch.toLowerCase());
-      });
-
+      const tasks = state.boards[board][col].filter(task => !taskSearch.trim() || `${task.t} ${task.d} ${task.p}`.toLowerCase().includes(taskSearch.toLowerCase()));
       const formOpen = boardFormState.board === board && boardFormState.col === col;
-
       return `
         <div class="col" ondragover="dragOver(event)" ondrop="dropTask(event, '${board}', '${col}')">
           <div class="col-head">
@@ -1144,14 +1184,14 @@
             <div class="count">${tasks.length}</div>
           </div>
           <div class="dropzone">
-            ${tasks.length ? tasks.map((task, index) => renderTask(board, col, task, index)).join('') : `<div class="empty-state">Nothing here. Clean slate.</div>`}
+            ${tasks.length ? tasks.map(task => renderTask(board, col, task)).join('') : `<div class="empty-state">Nothing here. Clean slate.</div>`}
           </div>
           ${formOpen ? renderTaskForm(board, col) : `<button class="btn" style="width:100%; margin-top:10px;" onclick="openBoardForm('${board}','${col}')">+ Add task</button>`}
         </div>
       `;
     }
 
-    function renderTask(board, col, task, visibleIndex) {
+    function renderTask(board, col, task) {
       const actualIndex = state.boards[board][col].findIndex(item => item === task);
       return `
         <article class="task" draggable="true" ondragstart="dragStart(event, '${board}', '${col}', ${actualIndex})" ondragend="dragEnd(event)">
@@ -1185,51 +1225,26 @@
       `;
     }
 
-    function openBoardForm(board, col) {
-      boardFormState = { board, col };
-      renderBoard(board);
-      setTimeout(() => document.getElementById(`task-title-${board}-${col}`)?.focus(), 20);
-    }
-
-    function closeBoardForm() {
-      boardFormState = { board: null, col: null };
-      renderBoard(currentTab);
-    }
+    function openBoardForm(board, col) { boardFormState = { board, col }; renderBoard(board); setTimeout(() => document.getElementById(`task-title-${board}-${col}`)?.focus(), 20); }
+    function closeBoardForm() { boardFormState = { board: null, col: null }; renderBoard(currentTab); }
 
     function saveTask(board, col) {
-      const titleEl = document.getElementById(`task-title-${board}-${col}`);
-      const priorityEl = document.getElementById(`task-priority-${board}-${col}`);
-      const dateEl = document.getElementById(`task-date-${board}-${col}`);
-      const title = titleEl?.value.trim();
+      const title = document.getElementById(`task-title-${board}-${col}`)?.value.trim();
       if (!title) return;
       state.boards[board][col].push({
         t: title,
-        p: priorityEl?.value || 'med',
-        d: dateEl?.value.trim() || ''
+        p: document.getElementById(`task-priority-${board}-${col}`)?.value || 'med',
+        d: document.getElementById(`task-date-${board}-${col}`)?.value.trim() || ''
       });
       closeBoardForm();
       scheduleSave();
       renderBoard(board);
     }
 
-    function deleteTask(board, col, index) {
-      state.boards[board][col].splice(index, 1);
-      scheduleSave();
-      renderBoard(board);
-    }
-
-    function dragStart(event, board, col, index) {
-      dragInfo = { board, col, index };
-      setTimeout(() => event.target.classList.add('dragging'), 0);
-    }
-
-    function dragEnd(event) {
-      event.target.classList.remove('dragging');
-    }
-
-    function dragOver(event) {
-      event.preventDefault();
-    }
+    function deleteTask(board, col, index) { state.boards[board][col].splice(index, 1); scheduleSave(); renderBoard(board); }
+    function dragStart(event, board, col, index) { dragInfo = { board, col, index }; setTimeout(() => event.target.classList.add('dragging'), 0); }
+    function dragEnd(event) { event.target.classList.remove('dragging'); }
+    function dragOver(event) { event.preventDefault(); }
 
     function dropTask(event, board, col) {
       event.preventDefault();
@@ -1241,6 +1256,265 @@
       scheduleSave();
       renderBoard(board);
     }
+
+    function renderFinance() {
+      const panel = document.getElementById('panel-finance');
+      const totalDebt = state.debts.reduce((sum, d) => sum + Number(d.balance || 0), 0);
+      const totalMinimums = state.debts.reduce((sum, d) => sum + Number(d.minimum || 0), 0);
+      const weightedApr = state.debts.length ? (state.debts.reduce((sum, d) => sum + Number(d.rate || 0), 0) / state.debts.length).toFixed(2) : '0.00';
+      panel.innerHTML = `
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div class="snapshot-card">
+            <div class="panel-title">Total debt</div>
+            <div style="font-size:2rem;font-weight:800;margin-top:10px;">${money(totalDebt)}</div>
+            <div class="bill-sub" style="margin-top:6px;">Current balances being tracked</div>
+          </div>
+          <div class="snapshot-card">
+            <div class="panel-title">Monthly minimums</div>
+            <div style="font-size:2rem;font-weight:800;margin-top:10px;">${money(totalMinimums)}</div>
+            <div class="bill-sub" style="margin-top:6px;">Base monthly obligation</div>
+          </div>
+          <div class="snapshot-card">
+            <div class="panel-title">Average APR</div>
+            <div style="font-size:2rem;font-weight:800;margin-top:10px;">${weightedApr}%</div>
+            <div class="bill-sub" style="margin-top:6px;">That interest is not playing around</div>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="section">
+            <div class="panel-head">
+              <div class="panel-title">Debt tracker</div>
+              <button class="btn" onclick="toggleDebtForm()">${debtFormOpen ? 'Close' : '+ Add debt'}</button>
+            </div>
+            ${debtFormOpen ? renderDebtForm() : ''}
+            <div class="debt-grid">
+              ${state.debts.map((debt, index) => renderDebtCard(debt, index)).join('')}
+            </div>
+          </div>
+          <div class="section">
+            <div class="panel-title" style="margin-bottom:12px;">Payment snapshots</div>
+            ${state.paymentSnapshots.map(snapshot => `
+              <div class="debt-row">
+                <div class="debt-main">
+                  <div class="debt-name">${esc(snapshot.label)}</div>
+                  <div class="debt-sub">${esc(snapshot.note)}</div>
+                </div>
+                <div class="status good">${snapshot.label.toLowerCase().includes('apr') ? esc(snapshot.amount + '%') : money(snapshot.amount)}</div>
+              </div>
+            `).join('')}
+            <div class="empty-state" style="margin-top:14px; text-align:left;">
+              Pro move: use this area for quick monthly scenarios like minimum only, target payment, snowball amount, or emergency squeeze mode.
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDebtCard(debt, index) {
+      const progress = debt.balance > 0 ? Math.max(0, Math.min(100, Math.round((Number(debt.paid || 0) / (Number(debt.balance || 1) + Number(debt.paid || 0))) * 100))) : 0;
+      return `
+        <div class="debt-card">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+            <div class="debt-name">${esc(debt.name)}</div>
+            <button class="icon-btn" onclick="deleteDebt(${index})">✕</button>
+          </div>
+          <div class="debt-sub">Balance ${money(debt.balance)} · APR ${Number(debt.rate || 0).toFixed(2)}% · Min ${money(debt.minimum)}</div>
+          <div class="bar"><span style="width:${progress}%;"></span></div>
+          <div class="debt-sub" style="margin-top:10px;">Paid down so far: ${money(debt.paid || 0)}</div>
+        </div>
+      `;
+    }
+
+    function renderDebtForm() {
+      return `
+        <div class="inline-form" style="margin-bottom:14px;">
+          <input class="input" id="debtName" placeholder="Account name">
+          <div class="inline-row">
+            <input class="input" id="debtBalance" placeholder="Balance">
+            <input class="input" id="debtRate" placeholder="APR %">
+          </div>
+          <div class="inline-row">
+            <input class="input" id="debtMinimum" placeholder="Minimum payment">
+            <input class="input" id="debtPaid" placeholder="Amount already paid down (optional)">
+          </div>
+          <div class="actions">
+            <button class="btn" onclick="toggleDebtForm(false)">Cancel</button>
+            <button class="btn primary" onclick="saveDebt()">Save debt</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleDebtForm(force) { debtFormOpen = typeof force === 'boolean' ? force : !debtFormOpen; renderFinance(); }
+    function saveDebt() {
+      const name = document.getElementById('debtName')?.value.trim();
+      if (!name) return;
+      state.debts.push({
+        name,
+        balance: Number(document.getElementById('debtBalance')?.value || 0),
+        rate: Number(document.getElementById('debtRate')?.value || 0),
+        minimum: Number(document.getElementById('debtMinimum')?.value || 0),
+        paid: Number(document.getElementById('debtPaid')?.value || 0)
+      });
+      debtFormOpen = false;
+      scheduleSave();
+      renderFinance();
+    }
+    function deleteDebt(index) { state.debts.splice(index, 1); scheduleSave(); renderFinance(); }
+
+    function renderTravel() {
+      const panel = document.getElementById('panel-travel');
+      panel.innerHTML = `
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div class="snapshot-card">
+            <div class="panel-title">Reminders</div>
+            <div style="font-size:2rem;font-weight:800;margin-top:10px;">${state.travel.reminders.length}</div>
+            <div class="bill-sub" style="margin-top:6px;">Stuff to handle before the trip or during the week</div>
+          </div>
+          <div class="snapshot-card">
+            <div class="panel-title">Itinerary stops</div>
+            <div style="font-size:2rem;font-weight:800;margin-top:10px;">${state.travel.itinerary.length}</div>
+            <div class="bill-sub" style="margin-top:6px;">Major beats for the trip or plan</div>
+          </div>
+          <div class="snapshot-card">
+            <div class="panel-title">Life goals</div>
+            <div style="font-size:2rem;font-weight:800;margin-top:10px;">${state.travel.goals.length}</div>
+            <div class="bill-sub" style="margin-top:6px;">Personal targets worth keeping in view</div>
+          </div>
+        </div>
+        <div class="travel-grid">
+          <div class="travel-card">
+            <div class="panel-head">
+              <div class="panel-title">Reminders</div>
+              <button class="btn" onclick="toggleReminderForm()">${reminderFormOpen ? 'Close' : '+ Add reminder'}</button>
+            </div>
+            ${reminderFormOpen ? renderReminderForm() : ''}
+            ${state.travel.reminders.map((item, index) => `
+              <div class="reminder-row">
+                <div class="reminder-main">
+                  <div class="reminder-name">${esc(item.name)}</div>
+                  <div class="reminder-sub">${esc(item.when)}</div>
+                </div>
+                <span class="status travel">Reminder</span>
+                <button class="icon-btn" onclick="deleteReminder(${index})">✕</button>
+              </div>
+            `).join('')}
+          </div>
+          <div class="travel-card">
+            <div class="panel-head">
+              <div class="panel-title">Itinerary</div>
+              <button class="btn" onclick="toggleItineraryForm()">${itineraryFormOpen ? 'Close' : '+ Add stop'}</button>
+            </div>
+            ${itineraryFormOpen ? renderItineraryForm() : ''}
+            ${state.travel.itinerary.map((item, index) => `
+              <div class="timeline-row">
+                <div class="timeline-main">
+                  <div class="timeline-name">${esc(item.day)} · ${esc(item.title)}</div>
+                  <div class="timeline-sub">${esc(item.detail)}</div>
+                </div>
+                <button class="icon-btn" onclick="deleteItinerary(${index})">✕</button>
+              </div>
+            `).join('')}
+          </div>
+          <div class="travel-card">
+            <div class="panel-head">
+              <div class="panel-title">Goals</div>
+              <button class="btn" onclick="toggleGoalForm()">${goalFormOpen ? 'Close' : '+ Add goal'}</button>
+            </div>
+            ${goalFormOpen ? renderGoalForm() : ''}
+            ${state.travel.goals.map((goal, index) => `
+              <div class="goal-card" style="margin-bottom:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="goal-main">
+                    <div class="goal-name">${esc(goal.name)}</div>
+                    <div class="goal-sub">${esc(goal.note)}</div>
+                  </div>
+                  <button class="icon-btn" onclick="deleteGoal(${index})">✕</button>
+                </div>
+                <div class="bar"><span style="width:${Number(goal.progress || 0)}%;"></span></div>
+                <div class="goal-sub" style="margin-top:8px;">${Number(goal.progress || 0)}% complete</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderReminderForm() {
+      return `
+        <div class="inline-form" style="margin-bottom:14px;">
+          <input class="input" id="reminderName" placeholder="Reminder">
+          <input class="input" id="reminderWhen" placeholder="When / trigger">
+          <div class="actions">
+            <button class="btn" onclick="toggleReminderForm(false)">Cancel</button>
+            <button class="btn primary" onclick="saveReminder()">Save</button>
+          </div>
+        </div>
+      `;
+    }
+    function renderItineraryForm() {
+      return `
+        <div class="inline-form" style="margin-bottom:14px;">
+          <input class="input" id="itineraryDay" placeholder="Day label">
+          <input class="input" id="itineraryTitle" placeholder="Stop / activity">
+          <textarea class="textarea" id="itineraryDetail" placeholder="Details"></textarea>
+          <div class="actions">
+            <button class="btn" onclick="toggleItineraryForm(false)">Cancel</button>
+            <button class="btn primary" onclick="saveItinerary()">Save</button>
+          </div>
+        </div>
+      `;
+    }
+    function renderGoalForm() {
+      return `
+        <div class="inline-form" style="margin-bottom:14px;">
+          <input class="input" id="goalName" placeholder="Goal name">
+          <input class="input" id="goalProgress" placeholder="Progress %">
+          <textarea class="textarea" id="goalNote" placeholder="Why it matters / note"></textarea>
+          <div class="actions">
+            <button class="btn" onclick="toggleGoalForm(false)">Cancel</button>
+            <button class="btn primary" onclick="saveGoal()">Save</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleReminderForm(force) { reminderFormOpen = typeof force === 'boolean' ? force : !reminderFormOpen; renderTravel(); }
+    function toggleItineraryForm(force) { itineraryFormOpen = typeof force === 'boolean' ? force : !itineraryFormOpen; renderTravel(); }
+    function toggleGoalForm(force) { goalFormOpen = typeof force === 'boolean' ? force : !goalFormOpen; renderTravel(); }
+
+    function saveReminder() {
+      const name = document.getElementById('reminderName')?.value.trim();
+      const when = document.getElementById('reminderWhen')?.value.trim();
+      if (!name) return;
+      state.travel.reminders.push({ name, when });
+      reminderFormOpen = false;
+      scheduleSave();
+      renderTravel();
+    }
+    function saveItinerary() {
+      const day = document.getElementById('itineraryDay')?.value.trim();
+      const title = document.getElementById('itineraryTitle')?.value.trim();
+      const detail = document.getElementById('itineraryDetail')?.value.trim();
+      if (!day || !title) return;
+      state.travel.itinerary.push({ day, title, detail });
+      itineraryFormOpen = false;
+      scheduleSave();
+      renderTravel();
+    }
+    function saveGoal() {
+      const name = document.getElementById('goalName')?.value.trim();
+      const progress = Number(document.getElementById('goalProgress')?.value || 0);
+      const note = document.getElementById('goalNote')?.value.trim();
+      if (!name) return;
+      state.travel.goals.push({ name, progress, note });
+      goalFormOpen = false;
+      scheduleSave();
+      renderTravel();
+    }
+    function deleteReminder(index) { state.travel.reminders.splice(index, 1); scheduleSave(); renderTravel(); }
+    function deleteItinerary(index) { state.travel.itinerary.splice(index, 1); scheduleSave(); renderTravel(); }
+    function deleteGoal(index) { state.travel.goals.splice(index, 1); scheduleSave(); renderTravel(); }
 
     function renderGrocery() {
       const panel = document.getElementById('panel-grocery');
@@ -1261,9 +1535,7 @@
           </div>
           <div class="section">
             <h3>List progress</h3>
-            <div style="color:var(--muted); line-height:1.7;">
-              Keep this dead simple. Dump things in fast, check them off in the store, and delete what you don’t need anymore.
-            </div>
+            <div style="color:var(--muted); line-height:1.7;">Keep this dead simple. Dump things in fast, check them off in the store, and delete what you don’t need anymore.</div>
           </div>
         </div>
         <div style="height:16px"></div>
@@ -1292,18 +1564,8 @@
       scheduleSave();
       renderGrocery();
     }
-
-    function toggleGrocery(category, index) {
-      state.grocery[category][index].done = !state.grocery[category][index].done;
-      scheduleSave();
-      renderGrocery();
-    }
-
-    function deleteGrocery(category, index) {
-      state.grocery[category].splice(index, 1);
-      scheduleSave();
-      renderGrocery();
-    }
+    function toggleGrocery(category, index) { state.grocery[category][index].done = !state.grocery[category][index].done; scheduleSave(); renderGrocery(); }
+    function deleteGrocery(category, index) { state.grocery[category].splice(index, 1); scheduleSave(); renderGrocery(); }
 
     function renderBillsAndCalendar() {
       const panel = document.getElementById('panel-bills');
@@ -1354,9 +1616,8 @@
         </div>
       `;
     }
-
     function renderBillList() {
-      if (!state.bills.length) return `<div class="empty-state">No bills yet. Nice. Love that for you.</div>`;
+      if (!state.bills.length) return `<div class="empty-state">No bills yet. Nice.</div>`;
       return state.bills.map((bill, index) => {
         const statusClass = bill.status === 'paid' ? 'paid' : bill.status === 'overdue' ? 'overdue' : 'upcoming';
         const statusLabel = bill.status === 'due-soon' ? 'Due soon' : bill.status.charAt(0).toUpperCase() + bill.status.slice(1);
@@ -1372,12 +1633,7 @@
         `;
       }).join('');
     }
-
-    function toggleBillForm(force) {
-      billFormOpen = typeof force === 'boolean' ? force : !billFormOpen;
-      renderBillsAndCalendar();
-    }
-
+    function toggleBillForm(force) { billFormOpen = typeof force === 'boolean' ? force : !billFormOpen; renderBillsAndCalendar(); }
     function saveBill() {
       const name = document.getElementById('billName')?.value.trim();
       if (!name) return;
@@ -1389,29 +1645,15 @@
       scheduleSave();
       renderBillsAndCalendar();
     }
-
-    function deleteBill(index) {
-      state.bills.splice(index, 1);
-      scheduleSave();
-      renderBillsAndCalendar();
-    }
+    function deleteBill(index) { state.bills.splice(index, 1); scheduleSave(); renderBillsAndCalendar(); }
 
     function renderCalendarCard() {
-      const y = state.calYear;
-      const m = state.calMonth;
+      const y = state.calYear, m = state.calMonth;
       const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       const firstDay = new Date(y, m, 1).getDay();
       const daysInMonth = new Date(y, m + 1, 0).getDate();
       const today = new Date();
-      const eventDaySet = new Set(
-        state.events
-          .filter(ev => {
-            const d = new Date(ev.date + 'T00:00:00');
-            return d.getFullYear() === y && d.getMonth() === m;
-          })
-          .map(ev => new Date(ev.date + 'T00:00:00').getDate())
-      );
-
+      const eventDaySet = new Set(state.events.filter(ev => { const d = new Date(ev.date + 'T00:00:00'); return d.getFullYear() === y && d.getMonth() === m; }).map(ev => new Date(ev.date + 'T00:00:00').getDate()));
       let calendarHtml = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(day => `<div class="cal-dow">${day}</div>`).join('');
       for (let i = 0; i < firstDay; i++) calendarHtml += `<div class="day empty"></div>`;
       for (let d = 1; d <= daysInMonth; d++) {
@@ -1419,22 +1661,13 @@
         const hasEvent = eventDaySet.has(d);
         calendarHtml += `<div class="day ${isToday ? 'today' : ''} ${hasEvent ? 'has-event' : ''}">${d}</div>`;
       }
-
-      const monthEvents = state.events
-        .filter(ev => {
-          const d = new Date(ev.date + 'T00:00:00');
-          return d.getFullYear() === y && d.getMonth() === m;
-        })
-        .sort((a, b) => a.date.localeCompare(b.date));
-
+      const monthEvents = state.events.filter(ev => { const d = new Date(ev.date + 'T00:00:00'); return d.getFullYear() === y && d.getMonth() === m; }).sort((a, b) => a.date.localeCompare(b.date));
       return `
         <div class="calendar">
-          <div class="cal-head">
-            <div class="cal-title">${months[m]} ${y}</div>
-          </div>
+          <div class="cal-head"><div class="cal-title">${months[m]} ${y}</div></div>
           <div class="cal-grid">${calendarHtml}</div>
           <div style="margin-top:14px;">
-            ${monthEvents.length ? monthEvents.map((ev, index) => `
+            ${monthEvents.length ? monthEvents.map(ev => `
               <div class="event-item">
                 <div style="width:10px;height:10px;border-radius:999px;background:${ev.color};margin-top:7px;flex-shrink:0"></div>
                 <div class="event-main">
@@ -1448,7 +1681,6 @@
         </div>
       `;
     }
-
     function renderEventForm() {
       return `
         <div class="inline-form" style="margin-bottom:14px;">
@@ -1461,12 +1693,7 @@
         </div>
       `;
     }
-
-    function toggleEventForm(force) {
-      eventFormOpen = typeof force === 'boolean' ? force : !eventFormOpen;
-      renderBillsAndCalendar();
-    }
-
+    function toggleEventForm(force) { eventFormOpen = typeof force === 'boolean' ? force : !eventFormOpen; renderBillsAndCalendar(); }
     function saveEvent() {
       const name = document.getElementById('eventName')?.value.trim();
       const date = document.getElementById('eventDate')?.value;
@@ -1476,13 +1703,7 @@
       scheduleSave();
       renderBillsAndCalendar();
     }
-
-    function deleteEvent(index) {
-      state.events.splice(index, 1);
-      scheduleSave();
-      renderBillsAndCalendar();
-    }
-
+    function deleteEvent(index) { state.events.splice(index, 1); scheduleSave(); renderBillsAndCalendar(); }
     function changeMonth(direction) {
       state.calMonth += direction;
       if (state.calMonth > 11) { state.calMonth = 0; state.calYear += 1; }
@@ -1510,16 +1731,13 @@
         </div>
       `;
     }
-
     function renderNoteForm() {
       return `
         <div class="section" style="margin-bottom:14px; padding:14px;">
           <div class="inline-form" style="margin-top:0;">
             <input class="input" id="noteTitle" placeholder="Title">
             <textarea class="textarea" id="noteBody" placeholder="Write the note..."></textarea>
-            <select class="select" id="noteColor">
-              ${NOTE_COLORS.map(color => `<option value="${color}">${color.charAt(0).toUpperCase() + color.slice(1)}</option>`).join('')}
-            </select>
+            <select class="select" id="noteColor">${NOTE_COLORS.map(color => `<option value="${color}">${color.charAt(0).toUpperCase() + color.slice(1)}</option>`).join('')}</select>
             <div class="actions">
               <button class="btn" onclick="toggleNoteForm(false)">Cancel</button>
               <button class="btn primary" onclick="saveNote()">Save note</button>
@@ -1528,12 +1746,7 @@
         </div>
       `;
     }
-
-    function toggleNoteForm(force) {
-      noteFormOpen = typeof force === 'boolean' ? force : !noteFormOpen;
-      renderNotes();
-    }
-
+    function toggleNoteForm(force) { noteFormOpen = typeof force === 'boolean' ? force : !noteFormOpen; renderNotes(); }
     function saveNote() {
       const title = document.getElementById('noteTitle')?.value.trim() || 'Note';
       const body = document.getElementById('noteBody')?.value.trim();
@@ -1544,18 +1757,9 @@
       scheduleSave();
       renderNotes();
     }
+    function deleteNote(index) { state.notes.splice(index, 1); scheduleSave(); renderNotes(); }
 
-    function deleteNote(index) {
-      state.notes.splice(index, 1);
-      scheduleSave();
-      renderNotes();
-    }
-
-    function quickAddTask() {
-      switchTab('daily');
-      openBoardForm('daily', 'todo');
-    }
-
+    function quickAddTask() { switchTab('daily'); openBoardForm('daily', 'todo'); }
     document.addEventListener('keydown', (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
