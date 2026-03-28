@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0e0f13;
+  --surface: #16181f;
+  --surface2: #1e2029;
+  --surface3: #252733;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #e8eaf0;
+  --text2: #9da3b4;
+  --text3: #5f6475;
+  --accent: #6c8ef5;
+  --accent2: #4fd9b3;
+  --warn: #f0a050;
+  --danger: #e05f6a;
+  --success: #5cba82;
+  --purple: #a678f0;
+  --pink: #e87eb8;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--text); }
+.dash { max-width: 1100px; margin: 0 auto; padding: 0 0 3rem; }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+.logo { font-family: 'Space Mono', monospace; font-size: 15px; color: var(--accent); letter-spacing: 0.5px; }
+.topbar-date { font-size: 13px; color: var(--text3); }
+.tabs { display: flex; gap: 4px; padding: 0 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.tab {
+  padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+  border: 1px solid var(--border); background: transparent; color: var(--text2);
+  cursor: pointer; transition: all 0.18s;
+}
+.tab:hover { background: var(--surface3); color: var(--text); }
+.tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.panel { display: none; padding: 0 1.5rem; }
+.panel.active { display: block; }
+
+/* KANBAN */
+.kanban { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.kol { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.kol-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.kol-title { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text2); }
+.kol-count { font-size: 11px; background: var(--surface3); color: var(--text3); border-radius: 10px; padding: 2px 7px; }
+.card {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 10px 12px; margin-bottom: 8px; cursor: grab; user-select: none;
+  transition: border-color 0.15s, transform 0.12s;
+}
+.card:hover { border-color: var(--border2); transform: translateY(-1px); }
+.card.dragging { opacity: 0.4; transform: scale(0.97); }
+.card-title { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
+.tag-high { background: rgba(224,95,106,0.15); color: var(--danger); }
+.tag-med { background: rgba(240,160,80,0.15); color: var(--warn); }
+.tag-low { background: rgba(92,186,130,0.15); color: var(--success); }
+.card-date { font-size: 11px; color: var(--text3); }
+.kol-drop { min-height: 40px; }
+.add-btn {
+  display: flex; align-items: center; gap: 6px; padding: 7px 10px;
+  background: transparent; border: 1px dashed var(--border); border-radius: var(--radius-sm);
+  color: var(--text3); font-size: 12px; cursor: pointer; width: 100%;
+  transition: border-color 0.15s, color 0.15s; font-family: inherit;
+}
+.add-btn:hover { border-color: var(--accent); color: var(--accent); }
+.add-form { margin-top: 8px; background: var(--surface3); border-radius: var(--radius-sm); padding: 10px; }
+.add-form input, .add-form select {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+  border-radius: var(--radius-sm); color: var(--text); font-size: 13px; font-family: inherit;
+  padding: 7px 10px; margin-bottom: 7px; outline: none;
+}
+.add-form input:focus, .add-form select:focus { border-color: var(--accent); }
+.add-form select option { background: var(--surface); }
+.form-row { display: flex; gap: 6px; }
+.form-row button { flex: 1; padding: 7px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
+.btn-save { background: var(--accent); color: #fff; }
+.btn-cancel { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+/* GROCERY */
+.grocery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.grocery-cat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.cat-title { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text2); margin-bottom: 10px; }
+.grocery-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.grocery-item:last-child { border-bottom: none; }
+.grocery-item input[type=checkbox] { accent-color: var(--accent2); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
+.grocery-item label { font-size: 13px; color: var(--text); cursor: pointer; flex: 1; }
+.grocery-item.checked label { text-decoration: line-through; color: var(--text3); }
+.grocery-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 15px; padding: 0 2px; }
+.grocery-del:hover { color: var(--danger); }
+.add-grocery-row { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.add-grocery-row input, .add-grocery-row select {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 12px; font-family: inherit; padding: 6px 9px; outline: none;
+}
+.add-grocery-row input { flex: 1; min-width: 120px; }
+.add-grocery-row input:focus, .add-grocery-row select:focus { border-color: var(--accent2); }
+.add-grocery-row select option { background: var(--surface); }
+.add-grocery-row button {
+  background: var(--accent2); color: #0e0f13; border: none; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 700; padding: 6px 12px; cursor: pointer; font-family: inherit;
+}
+
+/* BILLS / CALENDAR */
+.bills-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bill-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.sec-title { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text2); margin-bottom: 10px; }
+.bill-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.bill-item:last-child { border-bottom: none; }
+.bill-name { font-size: 13px; color: var(--text); }
+.bill-due { font-size: 11px; color: var(--text3); }
+.bill-amt { font-size: 13px; font-weight: 600; color: var(--text); }
+.bill-status { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+.bill-paid { background: rgba(92,186,130,0.15); color: var(--success); }
+.bill-due-soon { background: rgba(240,160,80,0.15); color: var(--warn); }
+.bill-overdue { background: rgba(224,95,106,0.15); color: var(--danger); }
+.cal-grid { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-nav { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 20px; padding: 2px 8px; }
+.cal-nav:hover { color: var(--text); }
+.cal-month { font-size: 13px; font-weight: 600; color: var(--text); }
+.cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; text-align: center; }
+.cal-day-name { font-size: 10px; color: var(--text3); padding: 3px 0; font-weight: 600; }
+.cal-day { font-size: 12px; padding: 5px 3px; border-radius: 5px; cursor: pointer; color: var(--text2); transition: background 0.12s; }
+.cal-day:hover { background: var(--surface3); color: var(--text); }
+.cal-day.today { background: var(--accent); color: #fff; font-weight: 700; }
+.cal-day.has-event { color: var(--text); }
+.cal-day.has-event::after { content: ''; display: block; width: 4px; height: 4px; background: var(--accent2); border-radius: 50%; margin: 2px auto 0; }
+.cal-day.empty { pointer-events: none; }
+.events-list { margin-top: 10px; }
+.event-item { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.event-item:last-child { border-bottom: none; }
+.event-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.event-info { flex: 1; }
+.event-name { font-size: 13px; color: var(--text); }
+.event-date { font-size: 11px; color: var(--text3); }
+
+/* NOTES */
+.notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.note-card { border-radius: var(--radius); padding: 14px; min-height: 120px; border: 1px solid transparent; position: relative; transition: transform 0.12s; }
+.note-card:hover { transform: translateY(-2px); }
+.note-card.yellow { background: rgba(240,160,80,0.1); border-color: rgba(240,160,80,0.2); }
+.note-card.blue { background: rgba(108,142,245,0.1); border-color: rgba(108,142,245,0.2); }
+.note-card.purple { background: rgba(166,120,240,0.1); border-color: rgba(166,120,240,0.2); }
+.note-card.green { background: rgba(92,186,130,0.1); border-color: rgba(92,186,130,0.2); }
+.note-card.pink { background: rgba(232,126,184,0.1); border-color: rgba(232,126,184,0.2); }
+.note-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.note-body { font-size: 12px; color: var(--text2); line-height: 1.5; white-space: pre-wrap; }
+.note-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+.note-card:hover .note-actions { opacity: 1; }
+.note-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 13px; }
+.note-btn:hover { color: var(--danger); }
+.add-note-card {
+  border-radius: var(--radius); padding: 14px; min-height: 120px; cursor: pointer;
+  border: 1px dashed var(--border); display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 8px; color: var(--text3); transition: border-color 0.15s, color 0.15s;
+}
+.add-note-card:hover { border-color: var(--purple); color: var(--purple); }
+.add-note-form { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 14px; }
+.add-note-form input, .add-note-form textarea, .add-note-form select {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); font-size: 13px; font-family: inherit; padding: 8px 10px; outline: none; margin-bottom: 8px;
+}
+.add-note-form input:focus, .add-note-form textarea:focus, .add-note-form select:focus { border-color: var(--purple); }
+.add-note-form textarea { min-height: 80px; resize: vertical; }
+.add-note-form select option { background: var(--surface); }
+.section-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text3); }
+
+/* SAVE BADGE */
+.save-badge {
+  position: fixed; bottom: 20px; right: 20px;
+  background: var(--success); color: #0e0f13;
+  font-size: 12px; font-weight: 700; padding: 8px 16px;
+  border-radius: 20px; opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+}
+.save-badge.show { opacity: 1; }
+
+@media (max-width: 700px) {
+  .kanban { grid-template-columns: 1fr; }
+  .bills-layout { grid-template-columns: 1fr; }
+  .tabs { gap: 4px; }
+  .tab { font-size: 12px; padding: 5px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="dash">
+  <div class="topbar">
+    <div class="logo">// my dashboard</div>
+    <div class="topbar-date" id="live-date"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('daily',this)">Daily Tasks</button>
+    <button class="tab" onclick="switchTab('short',this)">Short-Term</button>
+    <button class="tab" onclick="switchTab('long',this)">Long-Term</button>
+    <button class="tab" onclick="switchTab('grocery',this)">Grocery</button>
+    <button class="tab" onclick="switchTab('bills',this)">Bills &amp; Calendar</button>
+    <button class="tab" onclick="switchTab('notes',this)">Notes / Ideas</button>
+  </div>
+  <div class="panel active" id="panel-daily"></div>
+  <div class="panel" id="panel-short"></div>
+  <div class="panel" id="panel-long"></div>
+  <div class="panel" id="panel-grocery">
+    <div class="section-bar"><div class="section-label">Grocery List</div></div>
+    <div class="add-grocery-row">
+      <input id="grocery-input" type="text" placeholder="Add item..." onkeydown="if(event.key==='Enter')addGrocery()" />
+      <select id="grocery-cat-sel">
+        <option>Produce</option><option>Dairy</option><option>Meat</option>
+        <option>Pantry</option><option>Frozen</option><option>Beverages</option><option>Other</option>
+      </select>
+      <button onclick="addGrocery()">+ Add</button>
+    </div>
+    <div class="grocery-grid" id="grocery-grid"></div>
+  </div>
+  <div class="panel" id="panel-bills">
+    <div class="bills-layout">
+      <div class="bill-list">
+        <div class="sec-title">Bill Reminders</div>
+        <div id="bills-list"></div>
+        <button class="add-btn" style="margin-top:10px;" onclick="addBill()">+ Add bill</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+          <div class="cal-month" id="cal-month-label"></div>
+          <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+        </div>
+        <div class="cal-days" id="cal-days"></div>
+        <div class="events-list" id="events-list"></div>
+        <button class="add-btn" style="margin-top:10px;" onclick="addEvent()">+ Add event</button>
+      </div>
+    </div>
+  </div>
+  <div class="panel" id="panel-notes">
+    <div class="section-bar"><div class="section-label">Notes &amp; Ideas</div></div>
+    <div class="notes-grid" id="notes-grid"></div>
+  </div>
+</div>
+<div class="save-badge" id="save-badge">Saved!</div>
+
+<script>
+const COLORS = ['yellow','blue','purple','green','pink'];
+const ACCENT_COLORS = ['#f0a050','#6c8ef5','#a678f0','#5cba82','#e87eb8'];
+
+const DEFAULT_STATE = {
+  boards: {
+    daily: { todo: [{t:'Check emails',p:'high',d:'Today'},{t:'Review budget',p:'med',d:'Today'}], doing: [{t:'Morning workout',p:'low',d:'Today'}], done: [{t:'Coffee made',p:'low',d:'Done'}] },
+    short: { todo: [{t:'Finish project report',p:'high',d:'Mar 31'},{t:'Schedule dentist',p:'med',d:'Apr 5'}], doing: [{t:'Read 30 pages',p:'low',d:'This week'}], done: [] },
+    long: { todo: [{t:'Learn Spanish',p:'low',d:'Dec 2025'},{t:'Build emergency fund',p:'high',d:'Ongoing'}], doing: [{t:'Home renovation plan',p:'med',d:'Jun 2025'}], done: [] }
+  },
+  grocery: {
+    Produce: [{name:'Apples',done:false},{name:'Spinach',done:false}],
+    Dairy: [{name:'Milk',done:false},{name:'Greek yogurt',done:true}],
+    Meat: [{name:'Chicken breast',done:false}],
+    Pantry: [], Frozen: [], Beverages: [], Other: []
+  },
+  bills: [
+    {name:'Rent',amt:'$1,200',due:'Apr 1',status:'due-soon'},
+    {name:'Electric',amt:'$85',due:'Apr 8',status:'unpaid'},
+    {name:'Netflix',amt:'$17',due:'Mar 25',status:'paid'},
+    {name:'Internet',amt:'$60',due:'Apr 10',status:'unpaid'}
+  ],
+  events: [
+    {name:'Doctor appt',date:'2026-04-02',color:'#e05f6a'},
+    {name:'Pay rent',date:'2026-04-01',color:'#f0a050'},
+    {name:'Mom birthday',date:'2026-04-15',color:'#a678f0'},
+    {name:'Car service',date:'2026-04-20',color:'#6c8ef5'}
+  ],
+  notes: [
+    {title:'App idea',body:'Build a habit tracker with streaks and dark mode.',color:'blue'},
+    {title:'Book list',body:'Atomic Habits\nDeep Work\nThe Great Gatsby',color:'yellow'},
+    {title:'Meal prep ideas',body:'Sunday: prep rice, chicken, veggies for the week.',color:'green'}
+  ],
+  calYear: 2026,
+  calMonth: 3
+};
+
+function loadState() {
+  try {
+    const s = localStorage.getItem('my-dashboard');
+    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_STATE));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+}
+
+let state = loadState();
+let _addingNote = false;
+let dragCard = null, dragSrc = null, dragBoard = null;
+let saveTimer = null;
+
+function save() {
+  try {
+    localStorage.setItem('my-dashboard', JSON.stringify(state));
+    const badge = document.getElementById('save-badge');
+    badge.classList.add('show');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => badge.classList.remove('show'), 1800);
+  } catch(e) {}
+}
+
+function setDate() {
+  const d = new Date();
+  document.getElementById('live-date').textContent = d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (['daily','short','long'].includes(name)) renderBoard(name);
+  if (name === 'grocery') renderGrocery();
+  if (name === 'bills') { renderBills(); renderCalendar(); }
+  if (name === 'notes') renderNotes();
+}
+
+/* ---- KANBAN ---- */
+function renderBoard(bname) {
+  const cols = [['todo','To Do'],['doing','In Progress'],['done','Done']];
+  const panel = document.getElementById('panel-' + bname);
+  panel.innerHTML = '<div class="kanban">' +
+    cols.map(([col, label]) => `
+      <div class="kol" ondragover="dragOver(event)" ondrop="drop(event,'${bname}','${col}')">
+        <div class="kol-header">
+          <div class="kol-title">${label}</div>
+          <div class="kol-count">${state.boards[bname][col].length}</div>
+        </div>
+        <div class="kol-drop" id="drop-${bname}-${col}">
+          ${state.boards[bname][col].map((c,i) => cardHTML(bname,col,i,c)).join('')}
+        </div>
+        <button class="add-btn" onclick="showAddForm('${bname}','${col}')">+ Add task</button>
+        <div id="form-${bname}-${col}" style="display:none;"></div>
+      </div>`).join('') + '</div>';
+}
+
+function cardHTML(b, col, i, c) {
+  const pmap = {high:'tag-high',med:'tag-med',low:'tag-low'};
+  return `<div class="card" draggable="true"
+    ondragstart="dragStart(event,'${b}','${col}',${i})"
+    ondragend="dragEnd(event)">
+    <div class="card-title">${escHtml(c.t)}</div>
+    <div class="card-meta">
+      <span class="tag ${pmap[c.p]||'tag-low'}">${c.p}</span>
+      <span class="card-date">${escHtml(c.d||'')}</span>
+      <button onclick="deleteCard('${b}','${col}',${i})" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;" title="Delete">&#x2715;</button>
+    </div>
+  </div>`;
+}
+
+function showAddForm(b, col) {
+  const el = document.getElementById(`form-${b}-${col}`);
+  el.style.display = 'block';
+  el.innerHTML = `<div class="add-form">
+    <input id="inp-t-${b}-${col}" placeholder="Task name..." onkeydown="if(event.key==='Enter')saveCard('${b}','${col}')" />
+    <select id="inp-p-${b}-${col}">
+      <option value="low">Low priority</option>
+      <option value="med" selected>Medium priority</option>
+      <option value="high">High priority</option>
+    </select>
+    <input id="inp-d-${b}-${col}" type="text" placeholder="Due date (e.g. Apr 5)" />
+    <div class="form-row">
+      <button class="btn-save" onclick="saveCard('${b}','${col}')">Save</button>
+      <button class="btn-cancel" onclick="document.getElementById('form-${b}-${col}').style.display='none'">Cancel</button>
+    </div>
+  </div>`;
+  document.getElementById(`inp-t-${b}-${col}`).focus();
+}
+
+function saveCard(b, col) {
+  const t = document.getElementById(`inp-t-${b}-${col}`).value.trim();
+  const p = document.getElementById(`inp-p-${b}-${col}`).value;
+  const d = document.getElementById(`inp-d-${b}-${col}`).value.trim();
+  if (!t) return;
+  state.boards[b][col].push({t, p, d});
+  save(); renderBoard(b);
+}
+
+function deleteCard(b, col, i) {
+  state.boards[b][col].splice(i, 1);
+  save(); renderBoard(b);
+}
+
+function dragStart(e, b, col, i) {
+  dragCard = i; dragSrc = col; dragBoard = b;
+  e.dataTransfer.effectAllowed = 'move';
+  setTimeout(() => { const el = e.target; if(el) el.classList.add('dragging'); }, 0);
+}
+function dragEnd(e) { if(e.target) e.target.classList.remove('dragging'); }
+function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function drop(e, b, col) {
+  e.preventDefault();
+  if (!dragBoard || dragBoard !== b || dragSrc === col) { dragCard = dragSrc = dragBoard = null; return; }
+  const card = state.boards[b][dragSrc].splice(dragCard, 1)[0];
+  state.boards[b][col].push(card);
+  dragCard = dragSrc = dragBoard = null;
+  save(); renderBoard(b);
+}
+
+/* ---- GROCERY ---- */
+function renderGrocery() {
+  const grid = document.getElementById('grocery-grid');
+  const cats = Object.keys(state.grocery);
+  grid.innerHTML = cats.map(cat => {
+    const items = state.grocery[cat];
+    return `<div class="grocery-cat">
+      <div class="cat-title">${escHtml(cat)}</div>
+      ${items.map((item,i) => `
+        <div class="grocery-item${item.done?' checked':''}">
+          <input type="checkbox" id="gc-${cat}-${i}" ${item.done?'checked':''} onchange="toggleGrocery('${cat}',${i})">
+          <label for="gc-${cat}-${i}">${escHtml(item.name)}</label>
+          <button class="grocery-del" onclick="delGrocery('${cat}',${i})">&#x2715;</button>
+        </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+function addGrocery() {
+  const name = document.getElementById('grocery-input').value.trim();
+  const cat = document.getElementById('grocery-cat-sel').value;
+  if (!name) return;
+  if (!state.grocery[cat]) state.grocery[cat] = [];
+  state.grocery[cat].push({name, done: false});
+  document.getElementById('grocery-input').value = '';
+  save(); renderGrocery();
+}
+
+function toggleGrocery(cat, i) { state.grocery[cat][i].done = !state.grocery[cat][i].done; save(); renderGrocery(); }
+function delGrocery(cat, i) { state.grocery[cat].splice(i,1); save(); renderGrocery(); }
+
+/* ---- BILLS ---- */
+function renderBills() {
+  const smap = {paid:'bill-paid','due-soon':'bill-due-soon',unpaid:'bill-due-soon',overdue:'bill-overdue'};
+  const lmap = {paid:'Paid','due-soon':'Due Soon',unpaid:'Upcoming',overdue:'Overdue'};
+  document.getElementById('bills-list').innerHTML = state.bills.map((b,i) => `
+    <div class="bill-item">
+      <div>
+        <div class="bill-name">${escHtml(b.name)}</div>
+        <div class="bill-due">Due ${escHtml(b.due)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="bill-amt">${escHtml(b.amt)}</div>
+        <div class="bill-status ${smap[b.status]||'bill-due-soon'}">${lmap[b.status]||b.status}</div>
+        <button onclick="delBill(${i})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;" title="Remove">&#x2715;</button>
+      </div>
+    </div>`).join('');
+}
+
+function addBill() {
+  const name = prompt('Bill name:'); if (!name) return;
+  const amt = prompt('Amount (e.g. $50):') || '';
+  const due = prompt('Due date (e.g. Apr 15):') || '';
+  const status = prompt('Status (paid / due-soon / unpaid / overdue):') || 'unpaid';
+  state.bills.push({name, amt, due, status});
+  save(); renderBills();
+}
+function delBill(i) { state.bills.splice(i,1); save(); renderBills(); }
+
+/* ---- CALENDAR ---- */
+function renderCalendar() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const y = state.calYear, m = state.calMonth;
+  document.getElementById('cal-month-label').textContent = months[m] + ' ' + y;
+  const first = new Date(y, m, 1).getDay();
+  const days = new Date(y, m+1, 0).getDate();
+  const today = new Date();
+  const eventDates = {};
+  state.events.forEach(ev => {
+    const p = ev.date.split('-');
+    if (parseInt(p[0])===y && parseInt(p[1])-1===m) eventDates[parseInt(p[2])] = ev.color;
+  });
+  let html = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-day-name">${d}</div>`).join('');
+  for (let i = 0; i < first; i++) html += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= days; d++) {
+    const isToday = today.getDate()===d && today.getMonth()===m && today.getFullYear()===y;
+    const hasEv = eventDates[d];
+    html += `<div class="cal-day${isToday?' today':''}${hasEv?' has-event':''}">${d}</div>`;
+  }
+  document.getElementById('cal-days').innerHTML = html;
+  const evMonths = state.events.filter(ev => {
+    const p = ev.date.split('-');
+    return parseInt(p[0])===y && parseInt(p[1])-1===m;
+  }).sort((a,b) => a.date.localeCompare(b.date));
+  document.getElementById('events-list').innerHTML = evMonths.length
+    ? evMonths.map(ev => `
+      <div class="event-item">
+        <div class="event-dot" style="background:${ev.color};"></div>
+        <div class="event-info">
+          <div class="event-name">${escHtml(ev.name)}</div>
+          <div class="event-date">${ev.date}</div>
+        </div>
+        <button onclick="delEvent(${state.events.indexOf(ev)})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">&#x2715;</button>
+      </div>`).join('')
+    : '<div style="font-size:12px;color:var(--text3);padding:6px 0;">No events this month</div>';
+}
+
+function changeMonth(dir) {
+  state.calMonth += dir;
+  if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+  if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
+  save(); renderCalendar();
+}
+
+function addEvent() {
+  const name = prompt('Event name:'); if (!name) return;
+  const date = prompt('Date (YYYY-MM-DD):'); if (!date) return;
+  const color = ACCENT_COLORS[Math.floor(Math.random()*ACCENT_COLORS.length)];
+  state.events.push({name, date, color});
+  save(); renderCalendar();
+}
+function delEvent(i) { state.events.splice(i,1); save(); renderCalendar(); }
+
+/* ---- NOTES ---- */
+function renderNotes() {
+  const grid = document.getElementById('notes-grid');
+  grid.innerHTML = state.notes.map((n,i) => `
+    <div class="note-card ${n.color}">
+      <div class="note-actions">
+        <button class="note-btn" onclick="delNote(${i})" title="Delete">&#x2715;</button>
+      </div>
+      <div class="note-title">${escHtml(n.title)}</div>
+      <div class="note-body">${escHtml(n.body)}</div>
+    </div>`).join('') +
+    (_addingNote ? `
+      <div class="add-note-form">
+        <input id="note-title-inp" placeholder="Title..." />
+        <textarea id="note-body-inp" placeholder="Your note..."></textarea>
+        <select id="note-color-sel">
+          ${COLORS.map(c => `<option value="${c}">${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}
+        </select>
+        <div class="form-row">
+          <button class="btn-save" onclick="saveNote()">Save</button>
+          <button class="btn-cancel" onclick="cancelNote()">Cancel</button>
+        </div>
+      </div>` :
+      `<div class="add-note-card" onclick="startNote()">
+        <div style="font-size:22px;line-height:1;">+</div>
+        <div style="font-size:12px;">New note</div>
+      </div>`);
+}
+
+function startNote() { _addingNote = true; renderNotes(); setTimeout(() => document.getElementById('note-title-inp')?.focus(), 50); }
+function cancelNote() { _addingNote = false; renderNotes(); }
+function saveNote() {
+  const t = document.getElementById('note-title-inp').value.trim();
+  const b = document.getElementById('note-body-inp').value.trim();
+  const c = document.getElementById('note-color-sel').value;
+  if (!t && !b) { cancelNote(); return; }
+  state.notes.push({title: t||'Note', body: b, color: c});
+  _addingNote = false;
+  save(); renderNotes();
+}
+function delNote(i) { state.notes.splice(i,1); save(); renderNotes(); }
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ---- INIT ---- */
+setDate();
+renderBoard('daily');
+</script>
+</body>
+</html>
