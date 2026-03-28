@@ -36,7 +36,14 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
   margin-bottom: 1.5rem;
 }
 .logo { font-family: 'Space Mono', monospace; font-size: 15px; color: var(--accent); letter-spacing: 0.5px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
 .topbar-date { font-size: 13px; color: var(--text3); }
+.sync-status { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; transition: all 0.3s; }
+.sync-ok    { background: rgba(92,186,130,0.15); color: var(--success); }
+.sync-saving{ background: rgba(108,142,245,0.15); color: var(--accent); }
+.sync-error { background: rgba(224,95,106,0.15); color: var(--danger); }
+.sync-loading{ background: rgba(240,160,80,0.15); color: var(--warn); }
+
 .tabs { display: flex; gap: 4px; padding: 0 1.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
 .tab {
   padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
@@ -47,6 +54,21 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 .panel { display: none; padding: 0 1.5rem; }
 .panel.active { display: block; }
+
+/* LOADING OVERLAY */
+.loading-overlay {
+  position: fixed; inset: 0; background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; z-index: 100;
+}
+.loading-overlay.hidden { display: none; }
+.spinner {
+  width: 32px; height: 32px; border: 3px solid var(--border2);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-size: 13px; color: var(--text3); font-family: 'Space Mono', monospace; }
 
 /* KANBAN */
 .kanban { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
@@ -65,8 +87,8 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .card-meta { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.4px; }
 .tag-high { background: rgba(224,95,106,0.15); color: var(--danger); }
-.tag-med { background: rgba(240,160,80,0.15); color: var(--warn); }
-.tag-low { background: rgba(92,186,130,0.15); color: var(--success); }
+.tag-med  { background: rgba(240,160,80,0.15);  color: var(--warn); }
+.tag-low  { background: rgba(92,186,130,0.15);  color: var(--success); }
 .card-date { font-size: 11px; color: var(--text3); }
 .kol-drop { min-height: 40px; }
 .add-btn {
@@ -86,7 +108,7 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .add-form select option { background: var(--surface); }
 .form-row { display: flex; gap: 6px; }
 .form-row button { flex: 1; padding: 7px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
-.btn-save { background: var(--accent); color: #fff; }
+.btn-save   { background: var(--accent); color: #fff; }
 .btn-cancel { background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
 
 /* GROCERY */
@@ -120,17 +142,17 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .bill-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); }
 .bill-item:last-child { border-bottom: none; }
 .bill-name { font-size: 13px; color: var(--text); }
-.bill-due { font-size: 11px; color: var(--text3); }
-.bill-amt { font-size: 13px; font-weight: 600; color: var(--text); }
+.bill-due  { font-size: 11px; color: var(--text3); }
+.bill-amt  { font-size: 13px; font-weight: 600; color: var(--text); }
 .bill-status { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
-.bill-paid { background: rgba(92,186,130,0.15); color: var(--success); }
-.bill-due-soon { background: rgba(240,160,80,0.15); color: var(--warn); }
-.bill-overdue { background: rgba(224,95,106,0.15); color: var(--danger); }
+.bill-paid     { background: rgba(92,186,130,0.15); color: var(--success); }
+.bill-due-soon { background: rgba(240,160,80,0.15);  color: var(--warn); }
+.bill-overdue  { background: rgba(224,95,106,0.15);  color: var(--danger); }
 .cal-grid { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; }
 .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .cal-nav { background: none; border: none; color: var(--text2); cursor: pointer; font-size: 20px; padding: 2px 8px; }
 .cal-nav:hover { color: var(--text); }
-.cal-month { font-size: 13px; font-weight: 600; color: var(--text); }
+.cal-month-label { font-size: 13px; font-weight: 600; color: var(--text); }
 .cal-days { display: grid; grid-template-columns: repeat(7,1fr); gap: 2px; text-align: center; }
 .cal-day-name { font-size: 10px; color: var(--text3); padding: 3px 0; font-weight: 600; }
 .cal-day { font-size: 12px; padding: 5px 3px; border-radius: 5px; cursor: pointer; color: var(--text2); transition: background 0.12s; }
@@ -142,7 +164,7 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .events-list { margin-top: 10px; }
 .event-item { display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
 .event-item:last-child { border-bottom: none; }
-.event-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+.event-dot  { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
 .event-info { flex: 1; }
 .event-name { font-size: 13px; color: var(--text); }
 .event-date { font-size: 11px; color: var(--text3); }
@@ -151,13 +173,13 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .notes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .note-card { border-radius: var(--radius); padding: 14px; min-height: 120px; border: 1px solid transparent; position: relative; transition: transform 0.12s; }
 .note-card:hover { transform: translateY(-2px); }
-.note-card.yellow { background: rgba(240,160,80,0.1); border-color: rgba(240,160,80,0.2); }
-.note-card.blue { background: rgba(108,142,245,0.1); border-color: rgba(108,142,245,0.2); }
+.note-card.yellow { background: rgba(240,160,80,0.1);  border-color: rgba(240,160,80,0.2); }
+.note-card.blue   { background: rgba(108,142,245,0.1); border-color: rgba(108,142,245,0.2); }
 .note-card.purple { background: rgba(166,120,240,0.1); border-color: rgba(166,120,240,0.2); }
-.note-card.green { background: rgba(92,186,130,0.1); border-color: rgba(92,186,130,0.2); }
-.note-card.pink { background: rgba(232,126,184,0.1); border-color: rgba(232,126,184,0.2); }
+.note-card.green  { background: rgba(92,186,130,0.1);  border-color: rgba(92,186,130,0.2); }
+.note-card.pink   { background: rgba(232,126,184,0.1); border-color: rgba(232,126,184,0.2); }
 .note-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-.note-body { font-size: 12px; color: var(--text2); line-height: 1.5; white-space: pre-wrap; }
+.note-body  { font-size: 12px; color: var(--text2); line-height: 1.5; white-space: pre-wrap; }
 .note-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
 .note-card:hover .note-actions { opacity: 1; }
 .note-btn { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 13px; }
@@ -179,16 +201,6 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 .section-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .section-label { font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text3); }
 
-/* SAVE BADGE */
-.save-badge {
-  position: fixed; bottom: 20px; right: 20px;
-  background: var(--success); color: #0e0f13;
-  font-size: 12px; font-weight: 700; padding: 8px 16px;
-  border-radius: 20px; opacity: 0; transition: opacity 0.3s;
-  pointer-events: none;
-}
-.save-badge.show { opacity: 1; }
-
 @media (max-width: 700px) {
   .kanban { grid-template-columns: 1fr; }
   .bills-layout { grid-template-columns: 1fr; }
@@ -198,10 +210,20 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
 </style>
 </head>
 <body>
+
+<!-- Loading screen -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">loading your dashboard...</div>
+</div>
+
 <div class="dash">
   <div class="topbar">
     <div class="logo">// my dashboard</div>
-    <div class="topbar-date" id="live-date"></div>
+    <div class="topbar-right">
+      <div class="sync-status sync-loading" id="sync-status">Loading...</div>
+      <div class="topbar-date" id="live-date"></div>
+    </div>
   </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('daily',this)">Daily Tasks</button>
@@ -236,7 +258,7 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
       <div class="cal-grid">
         <div class="cal-header">
           <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
-          <div class="cal-month" id="cal-month-label"></div>
+          <div class="cal-month-label" id="cal-month-label"></div>
           <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
         </div>
         <div class="cal-days" id="cal-days"></div>
@@ -250,23 +272,22 @@ html, body { min-height: 100vh; background: var(--bg); font-family: 'DM Sans', s
     <div class="notes-grid" id="notes-grid"></div>
   </div>
 </div>
-<div class="save-badge" id="save-badge">Saved!</div>
 
 <script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmJwhIByFokIxYYkUoGPJn3XCgxC-uovYTtJNhSpIYgOoCKYWj1Ytt0hVZLnkrDCTS/exec';
 const COLORS = ['yellow','blue','purple','green','pink'];
 const ACCENT_COLORS = ['#f0a050','#6c8ef5','#a678f0','#5cba82','#e87eb8'];
 
 const DEFAULT_STATE = {
   boards: {
-    daily: { todo: [{t:'Check emails',p:'high',d:'Today'},{t:'Review budget',p:'med',d:'Today'}], doing: [{t:'Morning workout',p:'low',d:'Today'}], done: [{t:'Coffee made',p:'low',d:'Done'}] },
+    daily: { todo: [{t:'Check emails',p:'high',d:'Today'},{t:'Review budget',p:'med',d:'Today'}], doing: [{t:'Morning workout',p:'low',d:'Today'}], done: [] },
     short: { todo: [{t:'Finish project report',p:'high',d:'Mar 31'},{t:'Schedule dentist',p:'med',d:'Apr 5'}], doing: [{t:'Read 30 pages',p:'low',d:'This week'}], done: [] },
-    long: { todo: [{t:'Learn Spanish',p:'low',d:'Dec 2025'},{t:'Build emergency fund',p:'high',d:'Ongoing'}], doing: [{t:'Home renovation plan',p:'med',d:'Jun 2025'}], done: [] }
+    long:  { todo: [{t:'Learn Spanish',p:'low',d:'Dec 2025'},{t:'Build emergency fund',p:'high',d:'Ongoing'}], doing: [{t:'Home renovation plan',p:'med',d:'Jun 2025'}], done: [] }
   },
   grocery: {
-    Produce: [{name:'Apples',done:false},{name:'Spinach',done:false}],
-    Dairy: [{name:'Milk',done:false},{name:'Greek yogurt',done:true}],
-    Meat: [{name:'Chicken breast',done:false}],
-    Pantry: [], Frozen: [], Beverages: [], Other: []
+    Produce: [{name:'Apples',done:false}],
+    Dairy:   [{name:'Milk',done:false}],
+    Meat:    [], Pantry: [], Frozen: [], Beverages: [], Other: []
   },
   bills: [
     {name:'Rent',amt:'$1,200',due:'Apr 1',status:'due-soon'},
@@ -276,44 +297,78 @@ const DEFAULT_STATE = {
   ],
   events: [
     {name:'Doctor appt',date:'2026-04-02',color:'#e05f6a'},
-    {name:'Pay rent',date:'2026-04-01',color:'#f0a050'},
+    {name:'Pay rent',   date:'2026-04-01',color:'#f0a050'},
     {name:'Mom birthday',date:'2026-04-15',color:'#a678f0'},
     {name:'Car service',date:'2026-04-20',color:'#6c8ef5'}
   ],
   notes: [
-    {title:'App idea',body:'Build a habit tracker with streaks and dark mode.',color:'blue'},
-    {title:'Book list',body:'Atomic Habits\nDeep Work\nThe Great Gatsby',color:'yellow'},
-    {title:'Meal prep ideas',body:'Sunday: prep rice, chicken, veggies for the week.',color:'green'}
+    {title:'App idea',   body:'Build a habit tracker with streaks.',color:'blue'},
+    {title:'Book list',  body:'Atomic Habits\nDeep Work',color:'yellow'},
+    {title:'Meal prep',  body:'Sunday: prep rice, chicken, veggies.',color:'green'}
   ],
-  calYear: 2026,
-  calMonth: 3
+  calYear: 2026, calMonth: 3
 };
 
-function loadState() {
-  try {
-    const s = localStorage.getItem('my-dashboard');
-    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_STATE));
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
-}
-
-let state = loadState();
+let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 let _addingNote = false;
 let dragCard = null, dragSrc = null, dragBoard = null;
 let saveTimer = null;
+let currentTab = 'daily';
 
-function save() {
-  try {
-    localStorage.setItem('my-dashboard', JSON.stringify(state));
-    const badge = document.getElementById('save-badge');
-    badge.classList.add('show');
-    clearTimeout(saveTimer);
-    saveTimer = setTimeout(() => badge.classList.remove('show'), 1800);
-  } catch(e) {}
+/* ---- SYNC ---- */
+function setSyncStatus(type, text) {
+  const el = document.getElementById('sync-status');
+  el.className = 'sync-status sync-' + type;
+  el.textContent = text;
 }
 
-function setDate() {
-  const d = new Date();
-  document.getElementById('live-date').textContent = d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+async function loadFromSheet() {
+  try {
+    setSyncStatus('loading', 'Loading...');
+    const res = await fetch(SCRIPT_URL, { method: 'GET' });
+    const text = await res.text();
+    if (text && text !== '{}') {
+      const loaded = JSON.parse(text);
+      // Merge to ensure all keys exist
+      state = Object.assign(JSON.parse(JSON.stringify(DEFAULT_STATE)), loaded);
+      // Ensure all grocery categories exist
+      const defaultCats = ['Produce','Dairy','Meat','Pantry','Frozen','Beverages','Other'];
+      defaultCats.forEach(c => { if (!state.grocery[c]) state.grocery[c] = []; });
+    }
+    setSyncStatus('ok', 'Synced');
+    document.getElementById('loading-overlay').classList.add('hidden');
+    renderCurrent();
+  } catch(e) {
+    setSyncStatus('error', 'Offline');
+    document.getElementById('loading-overlay').classList.add('hidden');
+    renderCurrent();
+  }
+}
+
+async function saveToSheet() {
+  setSyncStatus('saving', 'Saving...');
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(state)
+    });
+    setSyncStatus('ok', 'Synced');
+  } catch(e) {
+    setSyncStatus('error', 'Save failed');
+  }
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToSheet, 1200);
+}
+
+/* ---- ROUTING ---- */
+function renderCurrent() {
+  if (['daily','short','long'].includes(currentTab)) renderBoard(currentTab);
+  else if (currentTab === 'grocery') renderGrocery();
+  else if (currentTab === 'bills') { renderBills(); renderCalendar(); }
+  else if (currentTab === 'notes') renderNotes();
 }
 
 function switchTab(name, btn) {
@@ -321,10 +376,8 @@ function switchTab(name, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('panel-' + name).classList.add('active');
-  if (['daily','short','long'].includes(name)) renderBoard(name);
-  if (name === 'grocery') renderGrocery();
-  if (name === 'bills') { renderBills(); renderCalendar(); }
-  if (name === 'notes') renderNotes();
+  currentTab = name;
+  renderCurrent();
 }
 
 /* ---- KANBAN ---- */
@@ -338,7 +391,7 @@ function renderBoard(bname) {
           <div class="kol-title">${label}</div>
           <div class="kol-count">${state.boards[bname][col].length}</div>
         </div>
-        <div class="kol-drop" id="drop-${bname}-${col}">
+        <div class="kol-drop">
           ${state.boards[bname][col].map((c,i) => cardHTML(bname,col,i,c)).join('')}
         </div>
         <button class="add-btn" onclick="showAddForm('${bname}','${col}')">+ Add task</button>
@@ -351,10 +404,10 @@ function cardHTML(b, col, i, c) {
   return `<div class="card" draggable="true"
     ondragstart="dragStart(event,'${b}','${col}',${i})"
     ondragend="dragEnd(event)">
-    <div class="card-title">${escHtml(c.t)}</div>
+    <div class="card-title">${esc(c.t)}</div>
     <div class="card-meta">
       <span class="tag ${pmap[c.p]||'tag-low'}">${c.p}</span>
-      <span class="card-date">${escHtml(c.d||'')}</span>
+      <span class="card-date">${esc(c.d||'')}</span>
       <button onclick="deleteCard('${b}','${col}',${i})" style="margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;" title="Delete">&#x2715;</button>
     </div>
   </div>`;
@@ -385,20 +438,20 @@ function saveCard(b, col) {
   const d = document.getElementById(`inp-d-${b}-${col}`).value.trim();
   if (!t) return;
   state.boards[b][col].push({t, p, d});
-  save(); renderBoard(b);
+  scheduleSave(); renderBoard(b);
 }
 
 function deleteCard(b, col, i) {
   state.boards[b][col].splice(i, 1);
-  save(); renderBoard(b);
+  scheduleSave(); renderBoard(b);
 }
 
 function dragStart(e, b, col, i) {
   dragCard = i; dragSrc = col; dragBoard = b;
   e.dataTransfer.effectAllowed = 'move';
-  setTimeout(() => { const el = e.target; if(el) el.classList.add('dragging'); }, 0);
+  setTimeout(() => { if(e.target) e.target.classList.add('dragging'); }, 0);
 }
-function dragEnd(e) { if(e.target) e.target.classList.remove('dragging'); }
+function dragEnd(e)  { if(e.target) e.target.classList.remove('dragging'); }
 function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
 function drop(e, b, col) {
   e.preventDefault();
@@ -406,39 +459,36 @@ function drop(e, b, col) {
   const card = state.boards[b][dragSrc].splice(dragCard, 1)[0];
   state.boards[b][col].push(card);
   dragCard = dragSrc = dragBoard = null;
-  save(); renderBoard(b);
+  scheduleSave(); renderBoard(b);
 }
 
 /* ---- GROCERY ---- */
 function renderGrocery() {
   const grid = document.getElementById('grocery-grid');
   const cats = Object.keys(state.grocery);
-  grid.innerHTML = cats.map(cat => {
-    const items = state.grocery[cat];
-    return `<div class="grocery-cat">
-      <div class="cat-title">${escHtml(cat)}</div>
-      ${items.map((item,i) => `
+  grid.innerHTML = cats.map(cat => `
+    <div class="grocery-cat">
+      <div class="cat-title">${esc(cat)}</div>
+      ${state.grocery[cat].map((item,i) => `
         <div class="grocery-item${item.done?' checked':''}">
           <input type="checkbox" id="gc-${cat}-${i}" ${item.done?'checked':''} onchange="toggleGrocery('${cat}',${i})">
-          <label for="gc-${cat}-${i}">${escHtml(item.name)}</label>
+          <label for="gc-${cat}-${i}">${esc(item.name)}</label>
           <button class="grocery-del" onclick="delGrocery('${cat}',${i})">&#x2715;</button>
         </div>`).join('')}
-    </div>`;
-  }).join('');
+    </div>`).join('');
 }
 
 function addGrocery() {
   const name = document.getElementById('grocery-input').value.trim();
-  const cat = document.getElementById('grocery-cat-sel').value;
+  const cat  = document.getElementById('grocery-cat-sel').value;
   if (!name) return;
   if (!state.grocery[cat]) state.grocery[cat] = [];
   state.grocery[cat].push({name, done: false});
   document.getElementById('grocery-input').value = '';
-  save(); renderGrocery();
+  scheduleSave(); renderGrocery();
 }
-
-function toggleGrocery(cat, i) { state.grocery[cat][i].done = !state.grocery[cat][i].done; save(); renderGrocery(); }
-function delGrocery(cat, i) { state.grocery[cat].splice(i,1); save(); renderGrocery(); }
+function toggleGrocery(cat, i) { state.grocery[cat][i].done = !state.grocery[cat][i].done; scheduleSave(); renderGrocery(); }
+function delGrocery(cat, i)    { state.grocery[cat].splice(i,1); scheduleSave(); renderGrocery(); }
 
 /* ---- BILLS ---- */
 function renderBills() {
@@ -447,26 +497,26 @@ function renderBills() {
   document.getElementById('bills-list').innerHTML = state.bills.map((b,i) => `
     <div class="bill-item">
       <div>
-        <div class="bill-name">${escHtml(b.name)}</div>
-        <div class="bill-due">Due ${escHtml(b.due)}</div>
+        <div class="bill-name">${esc(b.name)}</div>
+        <div class="bill-due">Due ${esc(b.due)}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div class="bill-amt">${escHtml(b.amt)}</div>
+        <div class="bill-amt">${esc(b.amt)}</div>
         <div class="bill-status ${smap[b.status]||'bill-due-soon'}">${lmap[b.status]||b.status}</div>
-        <button onclick="delBill(${i})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;" title="Remove">&#x2715;</button>
+        <button onclick="delBill(${i})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">&#x2715;</button>
       </div>
     </div>`).join('');
 }
 
 function addBill() {
-  const name = prompt('Bill name:'); if (!name) return;
-  const amt = prompt('Amount (e.g. $50):') || '';
-  const due = prompt('Due date (e.g. Apr 15):') || '';
-  const status = prompt('Status (paid / due-soon / unpaid / overdue):') || 'unpaid';
+  const name   = prompt('Bill name:'); if (!name) return;
+  const amt    = prompt('Amount (e.g. $50):') || '';
+  const due    = prompt('Due date (e.g. Apr 15):') || '';
+  const status = prompt('Status — type one:\npaid\ndue-soon\nunpaid\noverdue') || 'unpaid';
   state.bills.push({name, amt, due, status});
-  save(); renderBills();
+  scheduleSave(); renderBills();
 }
-function delBill(i) { state.bills.splice(i,1); save(); renderBills(); }
+function delBill(i) { state.bills.splice(i,1); scheduleSave(); renderBills(); }
 
 /* ---- CALENDAR ---- */
 function renderCalendar() {
@@ -474,7 +524,7 @@ function renderCalendar() {
   const y = state.calYear, m = state.calMonth;
   document.getElementById('cal-month-label').textContent = months[m] + ' ' + y;
   const first = new Date(y, m, 1).getDay();
-  const days = new Date(y, m+1, 0).getDate();
+  const days  = new Date(y, m+1, 0).getDate();
   const today = new Date();
   const eventDates = {};
   state.events.forEach(ev => {
@@ -485,20 +535,19 @@ function renderCalendar() {
   for (let i = 0; i < first; i++) html += `<div class="cal-day empty"></div>`;
   for (let d = 1; d <= days; d++) {
     const isToday = today.getDate()===d && today.getMonth()===m && today.getFullYear()===y;
-    const hasEv = eventDates[d];
+    const hasEv   = eventDates[d];
     html += `<div class="cal-day${isToday?' today':''}${hasEv?' has-event':''}">${d}</div>`;
   }
   document.getElementById('cal-days').innerHTML = html;
-  const evMonths = state.events.filter(ev => {
-    const p = ev.date.split('-');
-    return parseInt(p[0])===y && parseInt(p[1])-1===m;
-  }).sort((a,b) => a.date.localeCompare(b.date));
-  document.getElementById('events-list').innerHTML = evMonths.length
-    ? evMonths.map(ev => `
+  const evs = state.events
+    .filter(ev => { const p=ev.date.split('-'); return parseInt(p[0])===y && parseInt(p[1])-1===m; })
+    .sort((a,b) => a.date.localeCompare(b.date));
+  document.getElementById('events-list').innerHTML = evs.length
+    ? evs.map(ev => `
       <div class="event-item">
         <div class="event-dot" style="background:${ev.color};"></div>
         <div class="event-info">
-          <div class="event-name">${escHtml(ev.name)}</div>
+          <div class="event-name">${esc(ev.name)}</div>
           <div class="event-date">${ev.date}</div>
         </div>
         <button onclick="delEvent(${state.events.indexOf(ev)})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;">&#x2715;</button>
@@ -508,19 +557,18 @@ function renderCalendar() {
 
 function changeMonth(dir) {
   state.calMonth += dir;
-  if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
-  if (state.calMonth < 0) { state.calMonth = 11; state.calYear--; }
-  save(); renderCalendar();
+  if (state.calMonth > 11) { state.calMonth=0; state.calYear++; }
+  if (state.calMonth < 0)  { state.calMonth=11; state.calYear--; }
+  scheduleSave(); renderCalendar();
 }
-
 function addEvent() {
-  const name = prompt('Event name:'); if (!name) return;
-  const date = prompt('Date (YYYY-MM-DD):'); if (!date) return;
+  const name  = prompt('Event name:'); if (!name) return;
+  const date  = prompt('Date (YYYY-MM-DD):'); if (!date) return;
   const color = ACCENT_COLORS[Math.floor(Math.random()*ACCENT_COLORS.length)];
   state.events.push({name, date, color});
-  save(); renderCalendar();
+  scheduleSave(); renderCalendar();
 }
-function delEvent(i) { state.events.splice(i,1); save(); renderCalendar(); }
+function delEvent(i) { state.events.splice(i,1); scheduleSave(); renderCalendar(); }
 
 /* ---- NOTES ---- */
 function renderNotes() {
@@ -528,17 +576,17 @@ function renderNotes() {
   grid.innerHTML = state.notes.map((n,i) => `
     <div class="note-card ${n.color}">
       <div class="note-actions">
-        <button class="note-btn" onclick="delNote(${i})" title="Delete">&#x2715;</button>
+        <button class="note-btn" onclick="delNote(${i})">&#x2715;</button>
       </div>
-      <div class="note-title">${escHtml(n.title)}</div>
-      <div class="note-body">${escHtml(n.body)}</div>
+      <div class="note-title">${esc(n.title)}</div>
+      <div class="note-body">${esc(n.body)}</div>
     </div>`).join('') +
     (_addingNote ? `
       <div class="add-note-form">
         <input id="note-title-inp" placeholder="Title..." />
         <textarea id="note-body-inp" placeholder="Your note..."></textarea>
         <select id="note-color-sel">
-          ${COLORS.map(c => `<option value="${c}">${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}
+          ${COLORS.map(c=>`<option value="${c}">${c.charAt(0).toUpperCase()+c.slice(1)}</option>`).join('')}
         </select>
         <div class="form-row">
           <button class="btn-save" onclick="saveNote()">Save</button>
@@ -551,7 +599,7 @@ function renderNotes() {
       </div>`);
 }
 
-function startNote() { _addingNote = true; renderNotes(); setTimeout(() => document.getElementById('note-title-inp')?.focus(), 50); }
+function startNote()  { _addingNote = true;  renderNotes(); setTimeout(()=>document.getElementById('note-title-inp')?.focus(),50); }
 function cancelNote() { _addingNote = false; renderNotes(); }
 function saveNote() {
   const t = document.getElementById('note-title-inp').value.trim();
@@ -560,17 +608,21 @@ function saveNote() {
   if (!t && !b) { cancelNote(); return; }
   state.notes.push({title: t||'Note', body: b, color: c});
   _addingNote = false;
-  save(); renderNotes();
+  scheduleSave(); renderNotes();
 }
-function delNote(i) { state.notes.splice(i,1); save(); renderNotes(); }
+function delNote(i) { state.notes.splice(i,1); scheduleSave(); renderNotes(); }
 
-function escHtml(s) {
+/* ---- UTILS ---- */
+function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function setDate() {
+  document.getElementById('live-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 }
 
 /* ---- INIT ---- */
 setDate();
-renderBoard('daily');
+loadFromSheet();
 </script>
 </body>
 </html>
