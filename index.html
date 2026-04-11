@@ -639,10 +639,18 @@
             <div class="soft-text" style="margin-bottom:10px;">Journal entry area</div>
             <textarea id="journal-text" placeholder="Write whatever is on your mind..."></textarea>
             <div class="save-row">
-              <div id="save-status" class="save-status">Saved automatically in this browser.</div>
-              <button class="btn btn-secondary" id="clear-journal-btn" type="button">Clear journal</button>
+              <div id="save-status" class="save-status">Entries are saved by date in this browser.</div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn btn-secondary" id="save-journal-btn" type="button">Save entry</button>
+                <button class="btn btn-secondary" id="clear-journal-btn" type="button">Clear today</button>
+              </div>
             </div>
           </div>
+          <div class="journal-box" style="margin-top:14px;">
+            <div class="soft-text" style="margin-bottom:10px;">Saved entries</div>
+            <div id="journal-entries" class="notes"></div>
+          </div>
+        </div>
         </div>
 
         <div class="card span-8 searchable-card section" id="music" data-title="music rush pink floyd eric clapton david gilmour roger waters progressive rock new artists">
@@ -822,8 +830,10 @@
     const nextArtistBtn = document.getElementById('next-artist-btn');
     const musicRotationCount = document.getElementById('music-rotation-count');
     const journalText = document.getElementById('journal-text');
+    const saveJournalBtn = document.getElementById('save-journal-btn');
     const clearJournalBtn = document.getElementById('clear-journal-btn');
     const saveStatus = document.getElementById('save-status');
+    const journalEntries = document.getElementById('journal-entries');
     const searchInput = document.getElementById('dashboard-search');
     const searchEmpty = document.getElementById('search-empty');
     const navButtons = document.querySelectorAll('.nav-btn');
@@ -858,23 +868,84 @@
       navButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.target === targetId));
     }
 
-    function saveJournal() {
-      localStorage.setItem('randyQuietSpaceJournal', journalText.value);
-      saveStatus.textContent = 'Saved automatically in this browser.';
+    function getTodayKey() {
+      return new Date().toISOString().slice(0, 10);
     }
 
-    function loadJournal() {
-      const saved = localStorage.getItem('randyQuietSpaceJournal');
-      if (saved) {
-        journalText.value = saved;
-        saveStatus.textContent = 'Restored your last journal entry.';
+    function getPrettyDate(dateString) {
+      const date = new Date(`${dateString}T12:00:00`);
+      return date.toLocaleDateString(undefined, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    function getJournalStore() {
+      const raw = localStorage.getItem('randyQuietSpaceJournalEntries');
+      return raw ? JSON.parse(raw) : {};
+    }
+
+    function setJournalStore(store) {
+      localStorage.setItem('randyQuietSpaceJournalEntries', JSON.stringify(store));
+    }
+
+    function renderJournalEntries() {
+      const store = getJournalStore();
+      const entries = Object.entries(store).sort((a, b) => b[0].localeCompare(a[0]));
+
+      if (!entries.length) {
+        journalEntries.innerHTML = '<div class="note"><strong>No saved entries yet</strong><br /><small>Your dated notes will show up here.</small></div>';
+        return;
+      }
+
+      journalEntries.innerHTML = entries.map(([date, text]) => `
+        <div class="note">
+          <strong>${getPrettyDate(date)}</strong><br />
+          <small>${text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/
+/g, '<br />')}</small>
+        </div>
+      `).join('');
+    }
+
+    function loadTodayJournal() {
+      const store = getJournalStore();
+      const todayKey = getTodayKey();
+      if (store[todayKey]) {
+        journalText.value = store[todayKey];
+        saveStatus.textContent = `Loaded entry for ${getPrettyDate(todayKey)}.`;
       }
     }
 
+    function saveJournal() {
+      const value = journalText.value.trim();
+      const todayKey = getTodayKey();
+      const store = getJournalStore();
+
+      if (!value) {
+        saveStatus.textContent = 'Nothing to save yet for today.';
+        return;
+      }
+
+      store[todayKey] = value;
+      setJournalStore(store);
+      renderJournalEntries();
+      saveStatus.textContent = `Saved entry for ${getPrettyDate(todayKey)}.`;
+    }
+
     function clearJournal() {
+      const todayKey = getTodayKey();
+      const store = getJournalStore();
       journalText.value = '';
-      localStorage.removeItem('randyQuietSpaceJournal');
-      saveStatus.textContent = 'Journal cleared from this browser.';
+
+      if (store[todayKey]) {
+        delete store[todayKey];
+        setJournalStore(store);
+      }
+
+      renderJournalEntries();
+      saveStatus.textContent = `Cleared entry for ${getPrettyDate(todayKey)}.`;
     }
 
     function filterCards(term) {
@@ -902,13 +973,14 @@
       btn.addEventListener('click', () => scrollToSection(btn.dataset.target));
     });
 
-    journalText.addEventListener('input', saveJournal);
+    saveJournalBtn.addEventListener('click', saveJournal);
     clearJournalBtn.addEventListener('click', clearJournal);
     searchInput.addEventListener('input', (event) => filterCards(event.target.value));
 
     renderQuote(quoteIndex);
     renderArtist(artistIndex);
-    loadJournal();
+    loadTodayJournal();
+    renderJournalEntries();
   </script>
 </body>
 </html>
