@@ -86,7 +86,8 @@
     .footer-note,
     .soft-text,
     .search-empty,
-    .save-status {
+    .save-status,
+    .book-helper {
       color: var(--muted);
     }
 
@@ -152,7 +153,8 @@
     .mini,
     .note,
     .table-wrap,
-    .journal-box {
+    .journal-box,
+    .book-box {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -163,7 +165,8 @@
     .panel { padding: 26px; }
     .card { padding: 22px; }
     .mini { padding: 18px; }
-    .journal-box { padding: 18px; margin-top: 14px; }
+    .journal-box,
+    .book-box { padding: 18px; margin-top: 14px; }
 
     .section {
       scroll-margin-top: 28px;
@@ -326,13 +329,24 @@
       min-width: min(380px, 100%);
     }
 
-    .search input {
+    .search input,
+    textarea,
+    .book-input {
       width: 100%;
+      background: rgba(6, 12, 12, 0.46);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      font: inherit;
+      outline: none;
+    }
+
+    .search input {
       background: transparent;
       border: 0;
-      outline: none;
-      color: var(--text);
-      font-size: 0.95rem;
+      padding: 0;
+      border-radius: 0;
     }
 
     .search-empty {
@@ -342,16 +356,8 @@
     }
 
     textarea {
-      width: 100%;
       min-height: 120px;
       resize: vertical;
-      background: rgba(6, 12, 12, 0.46);
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
-      font: inherit;
-      outline: none;
     }
 
     .quote {
@@ -368,7 +374,10 @@
       color: var(--muted);
     }
 
-    .save-row {
+    .save-row,
+    .book-form,
+    .entry-actions,
+    .book-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -379,6 +388,36 @@
 
     .save-status {
       font-size: 0.9rem;
+    }
+
+    .entry-btn,
+    .book-btn {
+      border: 1px solid var(--border);
+      background: rgba(167, 243, 208, 0.06);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.85rem;
+    }
+
+    .entry-btn:hover,
+    .book-btn:hover,
+    .link-item:hover {
+      border-color: rgba(125, 211, 199, 0.24);
+    }
+
+    .book-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1.4fr 1fr auto;
+      margin-top: 12px;
+    }
+
+    .book-helper {
+      font-size: 0.9rem;
+      margin-top: 10px;
     }
 
     .link-list {
@@ -399,7 +438,6 @@
     }
 
     .link-item:hover {
-      border-color: rgba(125, 211, 199, 0.24);
       transform: translateY(-1px);
     }
 
@@ -442,8 +480,9 @@
 
     @media (max-width: 640px) {
       .main { padding: 18px; }
-      .panel, .card, .mini, .table-wrap { padding: 18px; }
+      .panel, .card, .mini, .table-wrap, .book-box, .journal-box { padding: 18px; }
       .search { min-width: 100%; }
+      .book-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -518,8 +557,8 @@
           <div class="mini-grid">
             <div class="mini">
               <p>Currently reading</p>
-              <div class="kpi">East of Eden</div>
-              <small class="muted">A strong one to sit with and absorb slowly</small>
+              <div class="kpi" id="current-book-title">East of Eden</div>
+              <small class="muted" id="current-book-author">John Steinbeck</small>
             </div>
             <div class="mini" style="margin-top: 14px;">
               <p>Reflection</p>
@@ -584,13 +623,18 @@
         <div class="card span-7 searchable-card section" id="reading" data-title="reading reset book list train dreams east of eden art thief cigarettes butchers crossing">
           <div class="section-tag">Reading + reset</div>
           <h3>Book list</h3>
-          <div class="list">
-            <div class="item"><div><strong>Train Dreams</strong><div class="task-meta">Denis Johnson</div></div><span class="pill">Queued</span></div>
-            <div class="item"><div><strong>My Year of Rest and Relaxation</strong><div class="task-meta">Ottessa Moshfegh</div></div><span class="pill">Queued</span></div>
-            <div class="item"><div><strong>The Art Thief</strong><div class="task-meta">Michael Finkel</div></div><span class="pill">Queued</span></div>
-            <div class="item"><div><strong>Cigarettes</strong><div class="task-meta">Harry Mathews</div></div><span class="pill">Queued</span></div>
-            <div class="item"><div><strong>Butcher’s Crossing</strong><div class="task-meta">John Williams</div></div><span class="pill">Queued</span></div>
-            <div class="item"><div><strong>East of Eden</strong><div class="task-meta">John Steinbeck</div></div><span class="pill">Current anchor</span></div>
+          <div id="book-list" class="list"></div>
+          <div class="book-box">
+            <div class="soft-text" style="margin-bottom:10px;">Edit reading list</div>
+            <div class="book-grid">
+              <input id="book-title-input" class="book-input" type="text" placeholder="Book title" />
+              <input id="book-author-input" class="book-input" type="text" placeholder="Author" />
+              <button id="save-book-btn" class="btn btn-secondary" type="button">Save book</button>
+            </div>
+            <div class="book-actions">
+              <div id="book-status" class="book-helper">Books are saved in this browser. Click Edit on a book to update it.</div>
+              <button id="clear-book-form-btn" class="book-btn" type="button">Clear form</button>
+            </div>
           </div>
         </div>
 
@@ -650,7 +694,6 @@
             <div class="soft-text" style="margin-bottom:10px;">Saved entries</div>
             <div id="journal-entries" class="notes"></div>
           </div>
-        </div>
         </div>
 
         <div class="card span-8 searchable-card section" id="music" data-title="music rush pink floyd eric clapton david gilmour roger waters progressive rock new artists">
@@ -820,6 +863,15 @@
       'Black Pumas • soulful and grounded with real presence'
     ];
 
+    const defaultBooks = [
+      { title: 'Train Dreams', author: 'Denis Johnson', tag: 'Queued' },
+      { title: 'My Year of Rest and Relaxation', author: 'Ottessa Moshfegh', tag: 'Queued' },
+      { title: 'The Art Thief', author: 'Michael Finkel', tag: 'Queued' },
+      { title: 'Cigarettes', author: 'Harry Mathews', tag: 'Queued' },
+      { title: 'Butcher’s Crossing', author: 'John Williams', tag: 'Queued' },
+      { title: 'East of Eden', author: 'John Steinbeck', tag: 'Current anchor' }
+    ];
+
     let quoteIndex = 0;
     let artistIndex = 0;
 
@@ -829,11 +881,22 @@
     const currentListeningText = document.getElementById('current-listening-text');
     const nextArtistBtn = document.getElementById('next-artist-btn');
     const musicRotationCount = document.getElementById('music-rotation-count');
+    const currentBookTitle = document.getElementById('current-book-title');
+    const currentBookAuthor = document.getElementById('current-book-author');
+
     const journalText = document.getElementById('journal-text');
     const saveJournalBtn = document.getElementById('save-journal-btn');
     const clearJournalBtn = document.getElementById('clear-journal-btn');
     const saveStatus = document.getElementById('save-status');
     const journalEntries = document.getElementById('journal-entries');
+
+    const bookList = document.getElementById('book-list');
+    const bookTitleInput = document.getElementById('book-title-input');
+    const bookAuthorInput = document.getElementById('book-author-input');
+    const saveBookBtn = document.getElementById('save-book-btn');
+    const clearBookFormBtn = document.getElementById('clear-book-form-btn');
+    const bookStatus = document.getElementById('book-status');
+
     const searchInput = document.getElementById('dashboard-search');
     const searchEmpty = document.getElementById('search-empty');
     const navButtons = document.querySelectorAll('.nav-btn');
@@ -903,8 +966,12 @@
       journalEntries.innerHTML = entries.map(([date, text]) => `
         <div class="note">
           <strong>${getPrettyDate(date)}</strong><br />
-          <small>${text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/
+          <small>${escapeHtml(text).replace(/
 /g, '<br />')}</small>
+          <div class="entry-actions">
+            <button class="entry-btn" type="button" data-action="edit-entry" data-date="${date}">Edit</button>
+            <button class="entry-btn" type="button" data-action="delete-entry" data-date="${date}">Delete</button>
+          </div>
         </div>
       `).join('');
     }
@@ -920,18 +987,19 @@
 
     function saveJournal() {
       const value = journalText.value.trim();
-      const todayKey = getTodayKey();
+      const dateKey = journalText.dataset.editDate || getTodayKey();
       const store = getJournalStore();
 
       if (!value) {
-        saveStatus.textContent = 'Nothing to save yet for today.';
+        saveStatus.textContent = 'Nothing to save yet for this entry.';
         return;
       }
 
-      store[todayKey] = value;
+      store[dateKey] = value;
       setJournalStore(store);
       renderJournalEntries();
-      saveStatus.textContent = `Saved entry for ${getPrettyDate(todayKey)}.`;
+      saveStatus.textContent = `Saved entry for ${getPrettyDate(dateKey)}.`;
+      delete journalText.dataset.editDate;
     }
 
     function clearJournal() {
@@ -946,6 +1014,151 @@
 
       renderJournalEntries();
       saveStatus.textContent = `Cleared entry for ${getPrettyDate(todayKey)}.`;
+      delete journalText.dataset.editDate;
+    }
+
+    function loadEntryIntoEditor(dateKey) {
+      const store = getJournalStore();
+      if (!store[dateKey]) return;
+      journalText.value = store[dateKey];
+      journalText.dataset.editDate = dateKey;
+      saveStatus.textContent = `Loaded ${getPrettyDate(dateKey)}. Click Save entry to update that dated entry.`;
+      journalText.focus();
+    }
+
+    function deleteJournalEntry(dateKey) {
+      const store = getJournalStore();
+      if (!store[dateKey]) return;
+      delete store[dateKey];
+      setJournalStore(store);
+
+      if (journalText.dataset.editDate === dateKey) {
+        delete journalText.dataset.editDate;
+        journalText.value = '';
+      }
+
+      if (dateKey === getTodayKey()) {
+        journalText.value = '';
+      }
+
+      renderJournalEntries();
+      saveStatus.textContent = `Deleted entry for ${getPrettyDate(dateKey)}.`;
+    }
+
+    function getBooksStore() {
+      const raw = localStorage.getItem('randyQuietSpaceBooks');
+      return raw ? JSON.parse(raw) : defaultBooks;
+    }
+
+    function setBooksStore(books) {
+      localStorage.setItem('randyQuietSpaceBooks', JSON.stringify(books));
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderBooks() {
+      const books = getBooksStore();
+
+      if (!books.length) {
+        bookList.innerHTML = '<div class="note"><strong>No books yet</strong><br /><small>Add one below and it will live here.</small></div>';
+        currentBookTitle.textContent = 'No current book';
+        currentBookAuthor.textContent = 'Add a few titles below';
+        return;
+      }
+
+      const currentBook = books.find((book) => book.tag === 'Current anchor') || books[0];
+      currentBookTitle.textContent = currentBook.title;
+      currentBookAuthor.textContent = currentBook.author;
+
+      bookList.innerHTML = books.map((book, index) => `
+        <div class="item">
+          <div>
+            <strong>${escapeHtml(book.title)}</strong>
+            <div class="task-meta">${escapeHtml(book.author)}</div>
+          </div>
+          <div class="book-actions">
+            <span class="pill">${escapeHtml(book.tag || 'Queued')}</span>
+            <button class="book-btn" type="button" data-action="edit-book" data-index="${index}">Edit</button>
+            <button class="book-btn" type="button" data-action="delete-book" data-index="${index}">Delete</button>
+            <button class="book-btn" type="button" data-action="anchor-book" data-index="${index}">Make current</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveBook() {
+      const title = bookTitleInput.value.trim();
+      const author = bookAuthorInput.value.trim();
+      const books = getBooksStore();
+      const editIndex = bookTitleInput.dataset.editIndex;
+
+      if (!title || !author) {
+        bookStatus.textContent = 'Add both a title and an author.';
+        return;
+      }
+
+      if (editIndex !== undefined && editIndex !== '') {
+        const existingTag = books[Number(editIndex)]?.tag || 'Queued';
+        books[Number(editIndex)] = { title, author, tag: existingTag };
+        bookStatus.textContent = `Updated ${title}.`;
+      } else {
+        books.push({ title, author, tag: 'Queued' });
+        bookStatus.textContent = `Added ${title}.`;
+      }
+
+      setBooksStore(books);
+      renderBooks();
+      clearBookForm(false);
+    }
+
+    function clearBookForm(resetStatus = true) {
+      bookTitleInput.value = '';
+      bookAuthorInput.value = '';
+      delete bookTitleInput.dataset.editIndex;
+      saveBookBtn.textContent = 'Save book';
+      if (resetStatus) {
+        bookStatus.textContent = 'Books are saved in this browser. Click Edit on a book to update it.';
+      }
+    }
+
+    function editBook(index) {
+      const books = getBooksStore();
+      const book = books[index];
+      if (!book) return;
+      bookTitleInput.value = book.title;
+      bookAuthorInput.value = book.author;
+      bookTitleInput.dataset.editIndex = index;
+      saveBookBtn.textContent = 'Update book';
+      bookStatus.textContent = `Editing ${book.title}.`;
+      bookTitleInput.focus();
+    }
+
+    function deleteBook(index) {
+      const books = getBooksStore();
+      const book = books[index];
+      if (!book) return;
+      books.splice(index, 1);
+      setBooksStore(books);
+      renderBooks();
+      clearBookForm(false);
+      bookStatus.textContent = `Deleted ${book.title}.`;
+    }
+
+    function makeCurrentBook(index) {
+      const books = getBooksStore().map((book, i) => ({
+        ...book,
+        tag: i === index ? 'Current anchor' : 'Queued'
+      }));
+      setBooksStore(books);
+      renderBooks();
+      bookStatus.textContent = `Updated your current book.`;
     }
 
     function filterCards(term) {
@@ -975,12 +1188,42 @@
 
     saveJournalBtn.addEventListener('click', saveJournal);
     clearJournalBtn.addEventListener('click', clearJournal);
+    saveBookBtn.addEventListener('click', saveBook);
+    clearBookFormBtn.addEventListener('click', () => clearBookForm());
+
+    journalEntries.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const { action, date } = button.dataset;
+
+      if (action === 'edit-entry') {
+        loadEntryIntoEditor(date);
+      }
+
+      if (action === 'delete-entry') {
+        const confirmed = window.confirm(`Delete the entry for ${getPrettyDate(date)}?`);
+        if (confirmed) deleteJournalEntry(date);
+      }
+    });
+
+    bookList.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const index = Number(button.dataset.index);
+      const { action } = button.dataset;
+
+      if (action === 'edit-book') editBook(index);
+      if (action === 'delete-book') deleteBook(index);
+      if (action === 'anchor-book') makeCurrentBook(index);
+    });
+
     searchInput.addEventListener('input', (event) => filterCards(event.target.value));
 
     renderQuote(quoteIndex);
     renderArtist(artistIndex);
     loadTodayJournal();
     renderJournalEntries();
+    renderBooks();
   </script>
 </body>
 </html>
