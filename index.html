@@ -20,6 +20,7 @@
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -46,6 +47,7 @@
       position: sticky;
       top: 0;
       height: 100vh;
+      overflow-y: auto;
     }
 
     .brand {
@@ -82,7 +84,9 @@
     .table th,
     .note small,
     .footer-note,
-    .soft-text {
+    .soft-text,
+    .search-empty,
+    .save-status {
       color: var(--muted);
     }
 
@@ -161,6 +165,10 @@
     .mini { padding: 18px; }
     .journal-box { padding: 18px; margin-top: 14px; }
 
+    .section {
+      scroll-margin-top: 28px;
+    }
+
     .headline {
       font-size: clamp(1.9rem, 3vw, 3rem);
       line-height: 1.05;
@@ -227,6 +235,7 @@
       font-size: 2rem;
       font-weight: 800;
       margin: 10px 0 4px;
+      line-height: 1.15;
     }
 
     .progress {
@@ -265,6 +274,12 @@
     .item strong {
       display: block;
       margin-bottom: 4px;
+    }
+
+    .item.hidden,
+    .card.hidden,
+    .table-wrap.hidden {
+      display: none;
     }
 
     .pill {
@@ -320,6 +335,12 @@
       font-size: 0.95rem;
     }
 
+    .search-empty {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
     textarea {
       width: 100%;
       min-height: 120px;
@@ -338,6 +359,53 @@
       line-height: 1.7;
       color: var(--soft);
       margin-top: 8px;
+      min-height: 92px;
+    }
+
+    .quote-source {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .save-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .save-status {
+      font-size: 0.9rem;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .link-item {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(6, 12, 12, 0.34);
+      border: 1px solid rgba(167, 243, 208, 0.08);
+      transition: 0.2s ease;
+    }
+
+    .link-item:hover {
+      border-color: rgba(125, 211, 199, 0.24);
+      transform: translateY(-1px);
+    }
+
+    .link-item strong {
+      display: block;
+      margin-bottom: 4px;
     }
 
     .table-wrap {
@@ -392,18 +460,18 @@
 
       <div class="nav-label">Main</div>
       <div class="nav">
-        <button class="active">Overview</button>
-        <button>Reading + Reset</button>
-        <button>Travel + Life</button>
-        <button>Music</button>
-        <button>Notes / Journal</button>
+        <button class="active nav-btn" data-target="overview">Overview</button>
+        <button class="nav-btn" data-target="reading">Reading + Reset</button>
+        <button class="nav-btn" data-target="travel">Travel + Life</button>
+        <button class="nav-btn" data-target="music">Music</button>
+        <button class="nav-btn" data-target="journal">Notes / Journal</button>
       </div>
 
       <div class="nav-label">Support</div>
       <div class="nav">
-        <button>Reflections</button>
-        <button>Goals</button>
-        <button>Saved Links</button>
+        <button class="nav-btn" data-target="reflection">Reflections</button>
+        <button class="nav-btn" data-target="goals">Goals</button>
+        <button class="nav-btn" data-target="recommended">Saved Links</button>
       </div>
 
       <div class="sidebar-footer">
@@ -414,7 +482,7 @@
     </aside>
 
     <main class="main">
-      <div class="topbar">
+      <div class="topbar section" id="overview" data-title="overview quiet dashboard calm reading music travel journal">
         <div>
           <div class="section-tag">Quiet dashboard</div>
           <h2 style="margin:0; font-size: 1.4rem;">Welcome back, Randy</h2>
@@ -422,23 +490,24 @@
         </div>
         <label class="search">
           <span>⌕</span>
-          <input type="text" placeholder="Search books, notes, music, trips, ideas..." />
+          <input id="dashboard-search" type="text" placeholder="Search books, notes, music, trips, ideas..." />
         </label>
       </div>
+      <div id="search-empty" class="search-empty">Nothing matched that search. Try a book, artist, mood, trip, or note idea.</div>
 
-      <section class="hero">
-        <div class="panel">
+      <section class="hero section" data-title="overview intro welcome calm dashboard">
+        <div class="panel searchable-card" data-title="overview calm space read plan breathe goals music notes saving">
           <div class="section-tag">Overview</div>
           <h1 class="headline">A calmer space to think, read, plan, and breathe.</h1>
           <p class="muted">This version shifts the dashboard away from bill pressure and into something more useful day to day: books, travel, notes, goals, music, and a steady focus on saving without all the financial noise.</p>
           <div class="hero-actions">
-            <button class="btn btn-primary">Open reading list</button>
-            <button class="btn btn-secondary">Open music space</button>
-            <button class="btn btn-secondary">Open journal</button>
+            <button class="btn btn-primary quick-jump" data-target="reading">Open reading list</button>
+            <button class="btn btn-secondary quick-jump" data-target="music">Open music space</button>
+            <button class="btn btn-secondary quick-jump" data-target="journal">Open journal</button>
           </div>
         </div>
 
-        <div class="panel">
+        <div class="panel searchable-card" data-title="right now currently reading reflection music rotation">
           <div class="split">
             <div>
               <div class="section-tag">Right now</div>
@@ -459,7 +528,7 @@
             </div>
             <div class="mini" style="margin-top: 14px;">
               <p>Music rotation</p>
-              <div class="kpi">3</div>
+              <div class="kpi" id="music-rotation-count">4</div>
               <small class="muted">Artists, albums, and things worth revisiting</small>
             </div>
           </div>
@@ -467,14 +536,17 @@
       </section>
 
       <section class="status-grid">
-        <div class="card">
+        <div class="card searchable-card section" id="reflection" data-title="quote reflection hemingway stillness calm perspective">
           <h3>Quote / reflection</h3>
-          <div class="quote">“The world breaks everyone and afterward many are strong at the broken places.”</div>
-          <div class="progress"><span style="width: 78%;"></span></div>
-          <div class="footer-note">A quieter, more reflective direction is now shaping the space</div>
+          <div class="quote" id="quote-text"></div>
+          <div class="quote-source" id="quote-source"></div>
+          <div class="save-row">
+            <div class="footer-note">A quieter, more reflective direction is shaping the space.</div>
+            <button class="btn btn-secondary" id="next-quote-btn" type="button">New quote</button>
+          </div>
         </div>
 
-        <div class="card">
+        <div class="card searchable-card section" id="goals" data-title="soft daily goals vanguard read write reflect steady">
           <h3>Soft daily goals</h3>
           <div class="list">
             <div class="item">
@@ -501,7 +573,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card searchable-card section" id="travel" data-title="travel life museums restaurants neighborhoods memories itinerary">
           <h3>Travel mode</h3>
           <p>Keep the life part alive. This is where upcoming trips, restaurant ideas, museums, neighborhoods, and small moments can stay visible.</p>
           <div class="footer-note">Less task list. More reasons to look forward to things.</div>
@@ -509,7 +581,7 @@
       </section>
 
       <section class="grid">
-        <div class="card span-7">
+        <div class="card span-7 searchable-card section" id="reading" data-title="reading reset book list train dreams east of eden art thief cigarettes butchers crossing">
           <div class="section-tag">Reading + reset</div>
           <h3>Book list</h3>
           <div class="list">
@@ -522,7 +594,7 @@
           </div>
         </div>
 
-        <div class="card span-5">
+        <div class="card span-5 searchable-card" data-title="goals saving vanguard quiet time memory making">
           <div class="section-tag">Goals</div>
           <h3>Short-term targets</h3>
           <div class="list">
@@ -550,7 +622,7 @@
           </div>
         </div>
 
-        <div class="card span-4">
+        <div class="card span-4 searchable-card section" id="journal" data-title="journal notes ideas thoughts reflections writing space nova discussions">
           <div class="section-tag">Notes</div>
           <h3>Journal / ideas</h3>
           <div class="notes">
@@ -565,11 +637,15 @@
           </div>
           <div class="journal-box">
             <div class="soft-text" style="margin-bottom:10px;">Journal entry area</div>
-            <textarea placeholder="Write whatever is on your mind..."></textarea>
+            <textarea id="journal-text" placeholder="Write whatever is on your mind..."></textarea>
+            <div class="save-row">
+              <div id="save-status" class="save-status">Saved automatically in this browser.</div>
+              <button class="btn btn-secondary" id="clear-journal-btn" type="button">Clear journal</button>
+            </div>
           </div>
         </div>
 
-        <div class="card span-8">
+        <div class="card span-8 searchable-card section" id="music" data-title="music rush pink floyd eric clapton david gilmour roger waters progressive rock new artists">
           <div class="section-tag">Music</div>
           <h3>Music space</h3>
           <div class="list">
@@ -579,6 +655,13 @@
                 <div class="task-meta">Rush, Pink Floyd, Eric Clapton, David Gilmour, Roger Waters</div>
               </div>
               <span class="pill">Core</span>
+            </div>
+            <div class="item">
+              <div>
+                <strong>Currently listening</strong>
+                <div class="task-meta" id="current-listening-text">Steven Wilson • thoughtful, layered, and built for deep listening</div>
+              </div>
+              <button class="btn btn-secondary" id="next-artist-btn" type="button">Next artist</button>
             </div>
             <div class="item">
               <div>
@@ -597,7 +680,7 @@
           </div>
         </div>
 
-        <div class="card span-12">
+        <div class="card span-12 searchable-card" data-title="travel life reservation reminders itinerary memory capture">
           <div class="section-tag">Travel + life</div>
           <h3>Trip planning board</h3>
           <div class="list">
@@ -625,35 +708,34 @@
           </div>
         </div>
 
-        <div class="card span-12">
+        <div class="card span-12 searchable-card section" id="recommended" data-title="recommended articles videos youtube saved links thoughtful long form music interviews travel walks">
           <div class="section-tag">Recommended</div>
           <h3>Articles, videos, and YouTube</h3>
-          <div class="list">
-            <div class="item">
-              <div>
-                <strong>Thoughtful long-form articles</strong>
-                <div class="task-meta">Essays, culture, tech, music, and reflective writing</div>
-              </div>
-              <span class="pill">Read</span>
-            </div>
-            <div class="item">
-              <div>
-                <strong>YouTube worth your time</strong>
-                <div class="task-meta">Music interviews, travel walks, calm commentary, deep-dive channels</div>
-              </div>
-              <span class="pill">Watch</span>
-            </div>
-            <div class="item">
-              <div>
-                <strong>Things to revisit later</strong>
-                <div class="task-meta">A holding space for what catches your attention</div>
-              </div>
-              <span class="pill">Save</span>
-            </div>
+          <div class="link-list">
+            <a class="link-item" href="https://www.youtube.com/@kexp" target="_blank" rel="noopener noreferrer">
+              <strong>KEXP</strong>
+              <div class="task-meta">Live sessions and artist performances that feel human, warm, and worth your time.</div>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/@nprmusic" target="_blank" rel="noopener noreferrer">
+              <strong>NPR Music</strong>
+              <div class="task-meta">Tiny Desk shows and music discovery without nonsense.</div>
+            </a>
+            <a class="link-item" href="https://www.openculture.com/" target="_blank" rel="noopener noreferrer">
+              <strong>Open Culture</strong>
+              <div class="task-meta">Essays, films, lectures, books, and thoughtful rabbit holes.</div>
+            </a>
+            <a class="link-item" href="https://longreads.com/" target="_blank" rel="noopener noreferrer">
+              <strong>Longreads</strong>
+              <div class="task-meta">Long-form writing when you want something with weight.</div>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/@RickBeato" target="_blank" rel="noopener noreferrer">
+              <strong>Rick Beato</strong>
+              <div class="task-meta">Music interviews, songwriting talk, and deep-dive listening.</div>
+            </a>
           </div>
         </div>
 
-        <div class="table-wrap">
+        <div class="table-wrap searchable-card" data-title="structure changed zen rework calmer foundation retreat layout">
           <div class="split">
             <div>
               <div class="section-tag">Structure</div>
@@ -696,5 +778,137 @@
       </section>
     </main>
   </div>
+
+  <script>
+    const quotes = [
+      {
+        text: 'The world breaks everyone and afterward many are strong at the broken places.',
+        source: 'Ernest Hemingway'
+      },
+      {
+        text: 'And the men who hold high places must be the ones who start to mold a new reality closer to the heart.',
+        source: 'Rush'
+      },
+      {
+        text: 'To live is the rarest thing in the world. Most people exist, that is all.',
+        source: 'Oscar Wilde'
+      },
+      {
+        text: 'The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.',
+        source: 'Albert Camus'
+      },
+      {
+        text: 'You can do anything you want to do, but you have to work at it.',
+        source: 'Neil Peart'
+      }
+    ];
+
+    const artists = [
+      'Steven Wilson • thoughtful, layered, and built for deep listening',
+      'Porcupine Tree • prog mood with atmosphere and edge',
+      'The War on Drugs • reflective, melodic, and good for long drives',
+      'Jason Isbell • strong writing with weight and humanity',
+      'Pineapple Thief • modern prog feel without sounding hollow',
+      'Black Pumas • soulful and grounded with real presence'
+    ];
+
+    let quoteIndex = 0;
+    let artistIndex = 0;
+
+    const quoteText = document.getElementById('quote-text');
+    const quoteSource = document.getElementById('quote-source');
+    const nextQuoteBtn = document.getElementById('next-quote-btn');
+    const currentListeningText = document.getElementById('current-listening-text');
+    const nextArtistBtn = document.getElementById('next-artist-btn');
+    const musicRotationCount = document.getElementById('music-rotation-count');
+    const journalText = document.getElementById('journal-text');
+    const clearJournalBtn = document.getElementById('clear-journal-btn');
+    const saveStatus = document.getElementById('save-status');
+    const searchInput = document.getElementById('dashboard-search');
+    const searchEmpty = document.getElementById('search-empty');
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const jumpButtons = document.querySelectorAll('.quick-jump');
+    const searchableCards = document.querySelectorAll('.searchable-card');
+
+    function renderQuote(index) {
+      const quote = quotes[index];
+      quoteText.textContent = `“${quote.text}”`;
+      quoteSource.textContent = quote.source;
+    }
+
+    function nextQuote() {
+      quoteIndex = (quoteIndex + 1) % quotes.length;
+      renderQuote(quoteIndex);
+    }
+
+    function renderArtist(index) {
+      currentListeningText.textContent = artists[index];
+      musicRotationCount.textContent = artists.length;
+    }
+
+    function nextArtist() {
+      artistIndex = (artistIndex + 1) % artists.length;
+      renderArtist(artistIndex);
+    }
+
+    function scrollToSection(targetId) {
+      const target = document.getElementById(targetId);
+      if (!target) return;
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      navButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.target === targetId));
+    }
+
+    function saveJournal() {
+      localStorage.setItem('randyQuietSpaceJournal', journalText.value);
+      saveStatus.textContent = 'Saved automatically in this browser.';
+    }
+
+    function loadJournal() {
+      const saved = localStorage.getItem('randyQuietSpaceJournal');
+      if (saved) {
+        journalText.value = saved;
+        saveStatus.textContent = 'Restored your last journal entry.';
+      }
+    }
+
+    function clearJournal() {
+      journalText.value = '';
+      localStorage.removeItem('randyQuietSpaceJournal');
+      saveStatus.textContent = 'Journal cleared from this browser.';
+    }
+
+    function filterCards(term) {
+      const normalized = term.trim().toLowerCase();
+      let visibleCount = 0;
+
+      searchableCards.forEach((card) => {
+        const text = `${card.textContent} ${card.dataset.title || ''}`.toLowerCase();
+        const match = !normalized || text.includes(normalized);
+        card.classList.toggle('hidden', !match);
+        if (match) visibleCount += 1;
+      });
+
+      searchEmpty.style.display = !visibleCount ? 'block' : 'none';
+    }
+
+    nextQuoteBtn.addEventListener('click', nextQuote);
+    nextArtistBtn.addEventListener('click', nextArtist);
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener('click', () => scrollToSection(btn.dataset.target));
+    });
+
+    jumpButtons.forEach((btn) => {
+      btn.addEventListener('click', () => scrollToSection(btn.dataset.target));
+    });
+
+    journalText.addEventListener('input', saveJournal);
+    clearJournalBtn.addEventListener('click', clearJournal);
+    searchInput.addEventListener('input', (event) => filterCards(event.target.value));
+
+    renderQuote(quoteIndex);
+    renderArtist(artistIndex);
+    loadJournal();
+  </script>
 </body>
 </html>
