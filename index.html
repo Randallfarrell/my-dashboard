@@ -3,21 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Randy Command Center</title>
+  <title>Randy Quiet Space</title>
   <style>
     :root {
-      --bg: #081120;
-      --panel: rgba(15, 23, 42, 0.82);
-      --panel-strong: rgba(15, 23, 42, 0.95);
-      --border: rgba(148, 163, 184, 0.18);
-      --text: #e5eefb;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-2: #60a5fa;
-      --success: #22c55e;
-      --warn: #f59e0b;
-      --danger: #f87171;
-      --shadow: 0 24px 60px rgba(2, 6, 23, 0.45);
+      --bg: #071012;
+      --panel: rgba(14, 24, 24, 0.84);
+      --panel-strong: rgba(14, 24, 24, 0.96);
+      --border: rgba(167, 243, 208, 0.12);
+      --text: #ebf5f2;
+      --muted: #9fb3ad;
+      --accent: #7dd3c7;
+      --accent-2: #a7f3d0;
+      --soft: #d6faef;
+      --shadow: 0 24px 60px rgba(1, 8, 10, 0.42);
       --radius: 22px;
     }
 
@@ -28,9 +26,9 @@
       font-family: Inter, Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 32%),
-        radial-gradient(circle at top right, rgba(96, 165, 250, 0.16), transparent 28%),
-        linear-gradient(180deg, #09111f 0%, #050914 100%);
+        radial-gradient(circle at top left, rgba(125, 211, 199, 0.14), transparent 34%),
+        radial-gradient(circle at top right, rgba(167, 243, 208, 0.12), transparent 30%),
+        linear-gradient(180deg, #0b1518 0%, #071012 100%);
       min-height: 100vh;
     }
 
@@ -43,7 +41,7 @@
     .sidebar {
       padding: 28px 20px;
       border-right: 1px solid var(--border);
-      background: rgba(2, 6, 23, 0.55);
+      background: rgba(4, 10, 11, 0.48);
       backdrop-filter: blur(20px);
       position: sticky;
       top: 0;
@@ -64,7 +62,7 @@
       display: grid;
       place-items: center;
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #03111f;
+      color: #08221d;
       font-weight: 800;
       box-shadow: var(--shadow);
     }
@@ -82,7 +80,9 @@
     .task-meta,
     .pill,
     .table th,
-    .note small {
+    .note small,
+    .footer-note,
+    .soft-text {
       color: var(--muted);
     }
 
@@ -113,21 +113,19 @@
 
     .nav button:hover,
     .nav button.active {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.25);
+      background: rgba(125, 211, 199, 0.1);
+      border-color: rgba(125, 211, 199, 0.22);
     }
 
     .sidebar-footer {
       margin-top: 26px;
       padding: 16px;
       border: 1px solid var(--border);
-      background: rgba(15, 23, 42, 0.65);
+      background: rgba(11, 20, 20, 0.74);
       border-radius: 18px;
     }
 
-    .main {
-      padding: 28px;
-    }
+    .main { padding: 28px; }
 
     .topbar {
       display: flex;
@@ -149,7 +147,8 @@
     .card,
     .mini,
     .note,
-    .table-wrap {
+    .table-wrap,
+    .journal-box {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -157,9 +156,10 @@
       backdrop-filter: blur(16px);
     }
 
-    .panel {
-      padding: 26px;
-    }
+    .panel { padding: 26px; }
+    .card { padding: 22px; }
+    .mini { padding: 18px; }
+    .journal-box { padding: 18px; margin-top: 14px; }
 
     .headline {
       font-size: clamp(1.9rem, 3vw, 3rem);
@@ -185,11 +185,11 @@
 
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #04101c;
+      color: #08221d;
     }
 
     .btn-secondary {
-      background: rgba(148, 163, 184, 0.08);
+      background: rgba(167, 243, 208, 0.06);
       color: var(--text);
       border-color: var(--border);
     }
@@ -206,13 +206,7 @@
       margin-bottom: 20px;
     }
 
-    .grid {
-      grid-template-columns: repeat(12, minmax(0, 1fr));
-    }
-
-    .card {
-      padding: 22px;
-    }
+    .grid { grid-template-columns: repeat(12, minmax(0, 1fr)); }
 
     .card h3,
     .panel h2,
@@ -227,10 +221,7 @@
     .span-6 { grid-column: span 6; }
     .span-7 { grid-column: span 7; }
     .span-8 { grid-column: span 8; }
-
-    .mini {
-      padding: 18px;
-    }
+    .span-12 { grid-column: span 12; }
 
     .kpi {
       font-size: 2rem;
@@ -241,7 +232,7 @@
     .progress {
       width: 100%;
       height: 10px;
-      background: rgba(148, 163, 184, 0.12);
+      background: rgba(167, 243, 208, 0.1);
       border-radius: 999px;
       overflow: hidden;
       margin-top: 14px;
@@ -251,7 +242,7 @@
       display: block;
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--success));
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
     }
 
     .list {
@@ -267,8 +258,8 @@
       gap: 12px;
       padding: 14px;
       border-radius: 16px;
-      background: rgba(2, 6, 23, 0.35);
-      border: 1px solid rgba(148, 163, 184, 0.1);
+      background: rgba(6, 12, 12, 0.34);
+      border: 1px solid rgba(167, 243, 208, 0.08);
     }
 
     .item strong {
@@ -284,10 +275,6 @@
       white-space: nowrap;
     }
 
-    .pill.good { color: #86efac; }
-    .pill.warn { color: #fcd34d; }
-    .pill.danger { color: #fca5a5; }
-
     .split {
       display: flex;
       justify-content: space-between;
@@ -296,62 +283,13 @@
       margin-bottom: 14px;
     }
 
-    .bar-chart {
-      display: grid;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .bar-row {
-      display: grid;
-      grid-template-columns: 110px 1fr 70px;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .bar-track {
-      height: 10px;
-      background: rgba(148, 163, 184, 0.12);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .bar-track span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--danger));
-    }
-
-    .table-wrap {
-      padding: 20px;
-      grid-column: span 12;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th,
-    td {
-      text-align: left;
-      padding: 14px 10px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-    }
-
-    td:last-child,
-    th:last-child { text-align: right; }
-
     .notes {
       display: grid;
       gap: 12px;
       margin-top: 14px;
     }
 
-    .note {
-      padding: 16px;
-    }
+    .note { padding: 16px; }
 
     .section-tag {
       font-size: 0.78rem;
@@ -366,7 +304,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(2, 6, 23, 0.4);
+      background: rgba(6, 12, 12, 0.42);
       border: 1px solid var(--border);
       padding: 12px 14px;
       border-radius: 16px;
@@ -382,11 +320,44 @@
       font-size: 0.95rem;
     }
 
-    .footer-note {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 0.85rem;
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      background: rgba(6, 12, 12, 0.46);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      font: inherit;
+      outline: none;
     }
+
+    .quote {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--soft);
+      margin-top: 8px;
+    }
+
+    .table-wrap {
+      padding: 20px;
+      grid-column: span 12;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 14px 10px;
+      border-bottom: 1px solid rgba(167, 243, 208, 0.08);
+    }
+
+    td:last-child,
+    th:last-child { text-align: right; }
 
     @media (max-width: 1100px) {
       .shell { grid-template-columns: 1fr; }
@@ -398,14 +369,13 @@
       }
       .hero,
       .status-grid { grid-template-columns: 1fr; }
-      .span-4, .span-5, .span-6, .span-7, .span-8, .table-wrap { grid-column: span 12; }
+      .span-4, .span-5, .span-6, .span-7, .span-8, .span-12, .table-wrap { grid-column: span 12; }
     }
 
     @media (max-width: 640px) {
       .main { padding: 18px; }
       .panel, .card, .mini, .table-wrap { padding: 18px; }
       .search { min-width: 100%; }
-      .bar-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -415,82 +385,82 @@
       <div class="brand">
         <div class="logo">R//</div>
         <div>
-          <h1>Randy Command Center</h1>
-          <p class="muted">Personal HQ for reading, travel, reflection, and low-stress goals</p>
+          <h1>Randy Quiet Space</h1>
+          <p class="muted">Personal HQ for reading, travel, reflection, music, and low-stress goals</p>
         </div>
       </div>
 
-      <div class="nav-label">Core</div>
+      <div class="nav-label">Main</div>
       <div class="nav">
         <button class="active">Overview</button>
         <button>Reading + Reset</button>
         <button>Travel + Life</button>
-        <button>Tasks</button>
+        <button>Music</button>
         <button>Notes / Journal</button>
       </div>
 
       <div class="nav-label">Support</div>
       <div class="nav">
-        <button>Calendar</button>
+        <button>Reflections</button>
         <button>Goals</button>
-        <button>Settings</button>
+        <button>Saved Links</button>
       </div>
 
       <div class="sidebar-footer">
-        <div class="section-tag">Next phase</div>
-        <strong>Data + auth ready</strong>
-        <p class="muted">This structure is built so you can later plug in Firebase auth, Google Sheets sync, and private user data without rebuilding the whole front end.</p>
+        <div class="section-tag">Intent</div>
+        <strong>A softer home base</strong>
+        <p class="muted">This version is framed as a place to decompress, collect thoughts, track what matters, and keep life moving without turning the page into a stress machine.</p>
       </div>
     </aside>
 
     <main class="main">
       <div class="topbar">
         <div>
-          <div class="section-tag">Dashboard</div>
-          <h2 style="margin:0; font-size: 1.4rem;">Good afternoon, Randy</h2>
-          <p class="muted" style="margin:6px 0 0;">Your life stack, cleaned up and easier to run.</p>
+          <div class="section-tag">Quiet dashboard</div>
+          <h2 style="margin:0; font-size: 1.4rem;">Welcome back, Randy</h2>
+          <p class="muted" style="margin:6px 0 0;">A softer place for books, music, travel, reflection, and calm forward motion.</p>
         </div>
         <label class="search">
           <span>⌕</span>
-          <input type="text" placeholder="Search cards, notes, balances, trips..." />
+          <input type="text" placeholder="Search books, notes, music, trips, ideas..." />
         </label>
       </div>
 
       <section class="hero">
         <div class="panel">
-          <div class="section-tag">Command view</div>
+          <div class="section-tag">Overview</div>
           <h1 class="headline">A calmer space to think, read, plan, and breathe.</h1>
-          <p class="muted">This version shifts the dashboard away from bill pressure and into something more useful day to day: books, travel, notes, goals, and a steady focus on saving without all the financial noise.</p>
+          <p class="muted">This version shifts the dashboard away from bill pressure and into something more useful day to day: books, travel, notes, goals, music, and a steady focus on saving without all the financial noise.</p>
           <div class="hero-actions">
             <button class="btn btn-primary">Open reading list</button>
-            <button class="btn btn-secondary">Open travel planner</button>
-            <button class="btn btn-secondary">Open reset notes</button>
+            <button class="btn btn-secondary">Open music space</button>
+            <button class="btn btn-secondary">Open journal</button>
           </div>
         </div>
 
         <div class="panel">
           <div class="split">
             <div>
-              <div class="section-tag">This week</div>
-              <h2 style="margin:0;">Focus snapshot</h2>
+              <div class="section-tag">Right now</div>
+              <h2 style="margin:0;">Gentle snapshot</h2>
             </div>
-            <span class="pill">4 active zones</span>
+            <span class="pill">5 living spaces</span>
           </div>
           <div class="mini-grid">
             <div class="mini">
-              <p>Books queued</p>
-              <div class="kpi">6</div>
-              <small class="muted">A solid stack for slow evenings</small>
+              <p>Currently reading</p>
+              <div class="kpi">East of Eden</div>
+              <small class="muted">A strong one to sit with and absorb slowly</small>
             </div>
             <div class="mini" style="margin-top: 14px;">
-              <p>Vanguard focus</p>
-              <div class="kpi">Save steadily</div>
-              <small class="muted">Less pressure. More long-game thinking.</small>
+              <p>Reflection</p>
+              <div class="kpi">Stay present</div>
+              <small class="muted">Less noise. More clarity. More room to breathe.</small>
             </div>
             <div class="mini" style="margin-top: 14px;">
-              <p>Travel reminders</p>
+              <p>Music rotation</p>
               <div class="kpi">3</div>
-              <small class="muted">Places to go and things worth doing</small>
+              <small class="muted">Artists, albums, and things worth revisiting</small>
             </div>
           </div>
         </div>
@@ -498,42 +468,49 @@
 
       <section class="status-grid">
         <div class="card">
-          <h3>Personal reset</h3>
-          <p>This space is meant to take the edge off. No wall of bills, no pressure-cooker energy, just the pieces of life you want in front of you.</p>
-          <div class="progress"><span style="width: 72%;"></span></div>
-          <div class="footer-note">A cleaner, calmer dashboard direction is in place</div>
+          <h3>Quote / reflection</h3>
+          <div class="quote">“The world breaks everyone and afterward many are strong at the broken places.”</div>
+          <div class="progress"><span style="width: 78%;"></span></div>
+          <div class="footer-note">A quieter, more reflective direction is now shaping the space</div>
         </div>
+
         <div class="card">
-          <h3>Upcoming life items</h3>
+          <h3>Soft daily goals</h3>
           <div class="list">
             <div class="item">
               <div>
-                <strong>Refresh dashboard vibe</strong>
-                <div class="task-meta">Personal project • now</div>
+                <strong>Read a little</strong>
+                <div class="task-meta">Even 10 quiet minutes counts</div>
               </div>
-              <span class="pill good">In motion</span>
+              <span class="pill">Gentle</span>
             </div>
             <div class="item">
               <div>
-                <strong>Add next book notes</strong>
-                <div class="task-meta">Reading • this week</div>
+                <strong>Add to Vanguard when able</strong>
+                <div class="task-meta">No pressure, just consistency</div>
               </div>
-              <span class="pill warn">Pending</span>
+              <span class="pill">Steady</span>
+            </div>
+            <div class="item">
+              <div>
+                <strong>Write one thought down</strong>
+                <div class="task-meta">Clear the mind a bit</div>
+              </div>
+              <span class="pill">Reflect</span>
             </div>
           </div>
         </div>
+
         <div class="card">
           <h3>Travel mode</h3>
-          <p>Use this for itinerary items, packing reminders, reservations, and city notes when a trip is active.</p>
-          <div class="footer-note">Best used with a trip card, dates, bookings, and day-by-day notes.</div>
+          <p>Keep the life part alive. This is where upcoming trips, restaurant ideas, museums, neighborhoods, and small moments can stay visible.</p>
+          <div class="footer-note">Less task list. More reasons to look forward to things.</div>
         </div>
       </section>
 
       <section class="grid">
         <div class="card span-7">
-          <div class="split">
-            <div>
-              <div class="section-tag">Reading + reset</div>
+          <div class="section-tag">Reading + reset</div>
           <h3>Book list</h3>
           <div class="list">
             <div class="item"><div><strong>Train Dreams</strong><div class="task-meta">Denis Johnson</div></div><span class="pill">Queued</span></div>
@@ -541,7 +518,7 @@
             <div class="item"><div><strong>The Art Thief</strong><div class="task-meta">Michael Finkel</div></div><span class="pill">Queued</span></div>
             <div class="item"><div><strong>Cigarettes</strong><div class="task-meta">Harry Mathews</div></div><span class="pill">Queued</span></div>
             <div class="item"><div><strong>Butcher’s Crossing</strong><div class="task-meta">John Williams</div></div><span class="pill">Queued</span></div>
-            <div class="item"><div><strong>East of Eden</strong><div class="task-meta">John Steinbeck</div></div><span class="pill good">Essential</span></div>
+            <div class="item"><div><strong>East of Eden</strong><div class="task-meta">John Steinbeck</div></div><span class="pill">Current anchor</span></div>
           </div>
         </div>
 
@@ -554,39 +531,21 @@
                 <strong>Keep adding to Vanguard</strong>
                 <div class="task-meta">Quiet, steady saving goal</div>
               </div>
-              <span class="pill good">Active</span>
+              <span class="pill">Active</span>
             </div>
             <div class="item">
               <div>
-                <strong>Make the dashboard feel restful</strong>
-                <div class="task-meta">Design direction</div>
+                <strong>Protect your quiet time</strong>
+                <div class="task-meta">A little decompression every day</div>
               </div>
               <span class="pill">In progress</span>
             </div>
             <div class="item">
               <div>
-                <strong>Keep travel and memories visible</strong>
-                <div class="task-meta">Life module</div>
+                <strong>Keep travel and memory-making alive</strong>
+                <div class="task-meta">Life still matters now</div>
               </div>
-              <span class="pill warn">Next</span>
-            </div>
-          </div>
-        </div>
-              <span class="pill good">Active</span>
-            </div>
-            <div class="item">
-              <div>
-                <strong>Secure login later</strong>
-                <div class="task-meta">Firebase Auth phase</div>
-              </div>
-              <span class="pill">Planned</span>
-            </div>
-            <div class="item">
-              <div>
-                <strong>Connect Google Sheets</strong>
-                <div class="task-meta">Data integration</div>
-              </div>
-              <span class="pill warn">Next</span>
+              <span class="pill">Important</span>
             </div>
           </div>
         </div>
@@ -596,17 +555,49 @@
           <h3>Journal / ideas</h3>
           <div class="notes">
             <div class="note">
-              <strong>Make this feel like my own space</strong><br />
-              <small>Less pressure, more clarity, and a place to decompress for a few minutes.</small>
+              <strong>Today’s thought</strong><br />
+              <small>A quiet place to drop whatever is on your mind without needing to turn it into anything big.</small>
             </div>
             <div class="note">
-              <strong>Let the dashboard breathe</strong><br />
-              <small>Books, travel, goals, and notes should feel inviting instead of crowded.</small>
+              <strong>Our discussions and thoughts</strong><br />
+              <small>A section for ideas, reflections, and the things we talk through that matter over time.</small>
             </div>
+          </div>
+          <div class="journal-box">
+            <div class="soft-text" style="margin-bottom:10px;">Journal entry area</div>
+            <textarea placeholder="Write whatever is on your mind..."></textarea>
           </div>
         </div>
 
         <div class="card span-8">
+          <div class="section-tag">Music</div>
+          <h3>Music space</h3>
+          <div class="list">
+            <div class="item">
+              <div>
+                <strong>Your roots</strong>
+                <div class="task-meta">Rush, Pink Floyd, Eric Clapton, David Gilmour, Roger Waters</div>
+              </div>
+              <span class="pill">Core</span>
+            </div>
+            <div class="item">
+              <div>
+                <strong>New artists to explore</strong>
+                <div class="task-meta">A place to add newer voices that still carry weight, atmosphere, and real songwriting</div>
+              </div>
+              <span class="pill">Discover</span>
+            </div>
+            <div class="item">
+              <div>
+                <strong>Albums and moods</strong>
+                <div class="task-meta">Late night, reflective, driving, rainy day, deep thought</div>
+              </div>
+              <span class="pill">Atmosphere</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card span-12">
           <div class="section-tag">Travel + life</div>
           <h3>Trip planning board</h3>
           <div class="list">
@@ -634,13 +625,41 @@
           </div>
         </div>
 
+        <div class="card span-12">
+          <div class="section-tag">Recommended</div>
+          <h3>Articles, videos, and YouTube</h3>
+          <div class="list">
+            <div class="item">
+              <div>
+                <strong>Thoughtful long-form articles</strong>
+                <div class="task-meta">Essays, culture, tech, music, and reflective writing</div>
+              </div>
+              <span class="pill">Read</span>
+            </div>
+            <div class="item">
+              <div>
+                <strong>YouTube worth your time</strong>
+                <div class="task-meta">Music interviews, travel walks, calm commentary, deep-dive channels</div>
+              </div>
+              <span class="pill">Watch</span>
+            </div>
+            <div class="item">
+              <div>
+                <strong>Things to revisit later</strong>
+                <div class="task-meta">A holding space for what catches your attention</div>
+              </div>
+              <span class="pill">Save</span>
+            </div>
+          </div>
+        </div>
+
         <div class="table-wrap">
           <div class="split">
             <div>
               <div class="section-tag">Structure</div>
-              <div class="table-title">What changed in this rework</div>
+              <div class="table-title">What changed in this zen rework</div>
             </div>
-            <span class="pill good">Cleaner foundation</span>
+            <span class="pill">Calmer foundation</span>
           </div>
           <table>
             <thead>
@@ -653,23 +672,23 @@
             <tbody>
               <tr>
                 <td>Layout</td>
-                <td>Single-stack prototype feel</td>
-                <td>Sidebar + command view + modular cards</td>
+                <td>Prototype dashboard energy</td>
+                <td>Gentler personal retreat layout</td>
               </tr>
               <tr>
                 <td>Visual style</td>
-                <td>Basic landing-page energy</td>
-                <td>Polished personal command center</td>
+                <td>Cool command center</td>
+                <td>Calmer personal retreat space</td>
               </tr>
               <tr>
-                <td>Scalability</td>
-                <td>Hard to expand cleanly</td>
-                <td>Built for auth, Sheets, and future modules</td>
+                <td>Purpose</td>
+                <td>Task-heavy and mixed</td>
+                <td>Reading, music, reflection, travel, and quiet goals</td>
               </tr>
               <tr>
                 <td>Usefulness</td>
                 <td>General idea visible</td>
-                <td>Built around calm routines, reading, travel, and simple goals</td>
+                <td>Built around reading, music, reflection, travel, and gentle goals</td>
               </tr>
             </tbody>
           </table>
@@ -679,4 +698,3 @@
   </div>
 </body>
 </html>
-
