@@ -156,7 +156,8 @@
     .table-wrap,
     .journal-box,
     .book-box,
-    .quote-box {
+    .quote-box,
+    .music-box {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -169,7 +170,8 @@
     .mini { padding: 18px; }
     .journal-box,
     .book-box,
-    .quote-box { padding: 18px; margin-top: 14px; }
+    .quote-box,
+    .music-box { padding: 18px; margin-top: 14px; }
 
     .section { scroll-margin-top: 28px; }
 
@@ -317,7 +319,9 @@
     .search input,
     textarea,
     .book-input,
-    .quote-input {
+    .quote-input,
+    .music-input,
+    .music-select {
       width: 100%;
       background: rgba(6, 12, 12, 0.46);
       color: var(--text);
@@ -364,7 +368,8 @@
     .entry-actions,
     .book-actions,
     .quote-actions,
-    .quote-tabs {
+    .quote-tabs,
+    .music-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -380,7 +385,9 @@
     .entry-btn,
     .book-btn,
     .quote-btn,
-    .tab-btn {
+    .tab-btn,
+    .music-btn,
+    .music-filter-btn {
       border: 1px solid var(--border);
       background: rgba(167, 243, 208, 0.06);
       color: var(--text);
@@ -395,17 +402,21 @@
     .book-btn:hover,
     .quote-btn:hover,
     .tab-btn:hover,
-    .link-item:hover {
+    .link-item:hover,
+    .music-btn:hover,
+    .music-filter-btn:hover {
       border-color: rgba(125, 211, 199, 0.24);
     }
 
-    .tab-btn.active {
+    .tab-btn.active,
+    .music-filter-btn.active {
       background: rgba(125, 211, 199, 0.12);
       border-color: rgba(125, 211, 199, 0.22);
     }
 
     .book-grid,
-    .quote-grid {
+    .quote-grid,
+    .music-grid {
       display: grid;
       gap: 10px;
       grid-template-columns: 1.4fr 1fr auto;
@@ -416,10 +427,48 @@
       grid-template-columns: 1.6fr 1fr auto;
     }
 
+    .music-grid {
+      grid-template-columns: 1.6fr 1fr 1fr auto;
+    }
+
     .book-helper,
-    .quote-helper {
+    .quote-helper,
+    .music-helper {
       font-size: 0.9rem;
       margin-top: 10px;
+    }
+
+    .music-filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .music-item-pill {
+      font-size: 0.72rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .pill-artist { background: rgba(55, 138, 221, 0.15); color: #7dd3f7; border-color: rgba(55, 138, 221, 0.25); }
+    .pill-album  { background: rgba(99, 153, 34, 0.15);  color: #a3d96a; border-color: rgba(99, 153, 34, 0.25); }
+    .pill-song   { background: rgba(226, 75, 74, 0.15);  color: #f7857a; border-color: rgba(226, 75, 74, 0.25); }
+    .pill-playlist { background: rgba(186, 117, 23, 0.15); color: #f5c775; border-color: rgba(186, 117, 23, 0.25); }
+
+    .music-note-text {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .music-status {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 8px;
+      min-height: 18px;
     }
 
     .link-list {
@@ -482,9 +531,9 @@
 
     @media (max-width: 640px) {
       .main { padding: 18px; }
-      .panel, .card, .mini, .table-wrap, .book-box, .journal-box, .quote-box { padding: 18px; }
+      .panel, .card, .mini, .table-wrap, .book-box, .journal-box, .quote-box, .music-box { padding: 18px; }
       .search { min-width: 100%; }
-      .book-grid, .quote-grid { grid-template-columns: 1fr; }
+      .book-grid, .quote-grid, .music-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -696,7 +745,7 @@
           <h3>Journal / ideas</h3>
           <div class="notes">
             <div class="note">
-              <strong>Today’s thought</strong><br />
+              <strong>Today's thought</strong><br />
               <small>A quiet place to drop whatever is on your mind without needing to turn it into anything big.</small>
             </div>
             <div class="note">
@@ -721,7 +770,8 @@
           </div>
         </div>
 
-        <div class="card span-8 searchable-card section" id="music" data-title="music rush pink floyd eric clapton david gilmour roger waters progressive rock new artists">
+        <!-- ── MUSIC SECTION ── -->
+        <div class="card span-8 searchable-card section" id="music" data-title="music rush pink floyd eric clapton david gilmour roger waters progressive rock new artists want to listen discover">
           <div class="section-tag">Music</div>
           <h3>Music space</h3>
           <div class="list">
@@ -753,6 +803,38 @@
               </div>
               <span class="pill">Atmosphere</span>
             </div>
+          </div>
+
+          <!-- Want to listen tracker -->
+          <div class="music-box">
+            <div class="soft-text" style="margin-bottom:10px;">Add something to listen to</div>
+            <div class="music-grid">
+              <input id="music-name-input" class="music-input" type="text" placeholder="Artist, album, or song name" />
+              <select id="music-type-input" class="music-select">
+                <option value="artist">Artist</option>
+                <option value="album">Album</option>
+                <option value="song">Song</option>
+                <option value="playlist">Playlist / mix</option>
+              </select>
+              <input id="music-note-input" class="music-input" type="text" placeholder="Why you want to hear it (optional)" />
+              <button id="save-music-btn" class="btn btn-secondary" type="button">Add</button>
+            </div>
+            <div class="music-actions">
+              <div id="music-status" class="music-helper">Saved in this browser. Mark as done when you've listened.</div>
+              <button id="clear-music-form-btn" class="music-btn" type="button">Clear form</button>
+            </div>
+          </div>
+
+          <div class="music-box">
+            <div class="soft-text" style="margin-bottom:10px;">Want to listen</div>
+            <div class="music-filter-row">
+              <button class="music-filter-btn active" data-filter="all">All</button>
+              <button class="music-filter-btn" data-filter="artist">Artists</button>
+              <button class="music-filter-btn" data-filter="album">Albums</button>
+              <button class="music-filter-btn" data-filter="song">Songs</button>
+              <button class="music-filter-btn" data-filter="playlist">Playlists</button>
+            </div>
+            <div id="music-want-list" class="list" style="margin-top:0;"></div>
           </div>
         </div>
 
@@ -881,7 +963,7 @@
       { title: 'My Year of Rest and Relaxation', author: 'Ottessa Moshfegh', tag: 'Queued' },
       { title: 'The Art Thief', author: 'Michael Finkel', tag: 'Queued' },
       { title: 'Cigarettes', author: 'Harry Mathews', tag: 'Queued' },
-      { title: 'Butcher’s Crossing', author: 'John Williams', tag: 'Queued' },
+      { title: "Butcher's Crossing", author: 'John Williams', tag: 'Queued' },
       { title: 'East of Eden', author: 'John Steinbeck', tag: 'Current anchor' }
     ];
 
@@ -889,7 +971,11 @@
     let customQuoteIndex = 0;
     let artistIndex = 0;
     let quoteMode = 'stoic';
+    let musicActiveFilter = 'all';
 
+    const MUSIC_KEY = 'randyMusicWantToListen';
+
+    // ── element refs ──────────────────────────────────────────────
     const quoteText = document.getElementById('quote-text');
     const quoteSource = document.getElementById('quote-source');
     const nextQuoteBtn = document.getElementById('next-quote-btn');
@@ -930,6 +1016,16 @@
     const jumpButtons = document.querySelectorAll('.quick-jump');
     const searchableCards = document.querySelectorAll('.searchable-card');
 
+    const musicNameInput = document.getElementById('music-name-input');
+    const musicTypeInput = document.getElementById('music-type-input');
+    const musicNoteInput = document.getElementById('music-note-input');
+    const saveMusicBtn = document.getElementById('save-music-btn');
+    const clearMusicFormBtn = document.getElementById('clear-music-form-btn');
+    const musicStatus = document.getElementById('music-status');
+    const musicWantList = document.getElementById('music-want-list');
+    const musicFilterBtns = document.querySelectorAll('.music-filter-btn');
+
+    // ── helpers ───────────────────────────────────────────────────
     function escapeHtml(value) {
       return String(value)
         .replace(/&/g, '&amp;')
@@ -953,13 +1049,11 @@
     function getPrettyDate(dateString) {
       const date = new Date(`${dateString}T12:00:00`);
       return date.toLocaleDateString(undefined, {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
       });
     }
 
+    // ── artists ───────────────────────────────────────────────────
     function renderArtist(index) {
       currentListeningText.textContent = artists[index];
       musicRotationCount.textContent = artists.length;
@@ -970,6 +1064,7 @@
       renderArtist(artistIndex);
     }
 
+    // ── quotes ────────────────────────────────────────────────────
     function getCustomQuotesStore() {
       const raw = localStorage.getItem('randyQuietSpaceCustomQuotes');
       return raw ? JSON.parse(raw) : [];
@@ -981,12 +1076,10 @@
 
     function renderCustomQuoteList() {
       const customQuotes = getCustomQuotesStore();
-
       if (!customQuotes.length) {
         customQuoteList.innerHTML = '<div class="note"><strong>No personal quotes yet</strong><br /><small>Add one above and it will show up here.</small></div>';
         return;
       }
-
       customQuoteList.innerHTML = customQuotes.map((quote, index) => `
         <div class="note">
           <strong>${escapeHtml(quote.source || 'Unknown source')}</strong><br />
@@ -1010,13 +1103,12 @@
     function renderActiveQuote() {
       const customQuotes = getCustomQuotesStore();
       let activeQuote;
-
       if (quoteMode === 'custom' && customQuotes.length) {
         customQuoteIndex = customQuoteIndex % customQuotes.length;
         activeQuote = customQuotes[customQuoteIndex];
         quoteStatus.textContent = 'Showing one of your saved personal quotes.';
       } else if (quoteMode === 'custom' && !customQuotes.length) {
-        quoteText.textContent = '“Add a quote you like and it will appear here.”';
+        quoteText.textContent = '"Add a quote you like and it will appear here."';
         quoteSource.textContent = 'Your Quiet Space';
         quoteStatus.textContent = 'No personal quotes yet — stoic feed is still ready when you want it.';
         updateQuoteMeta();
@@ -1026,8 +1118,7 @@
         activeQuote = stoicQuotes[stoicQuoteIndex];
         quoteStatus.textContent = 'Showing a built-in stoic quote for steadier perspective.';
       }
-
-      quoteText.textContent = `“${activeQuote.text}”`;
+      quoteText.textContent = `"${activeQuote.text}"`;
       quoteSource.textContent = activeQuote.source;
       updateQuoteMeta();
     }
@@ -1035,10 +1126,7 @@
     function nextQuote() {
       if (quoteMode === 'custom') {
         const customQuotes = getCustomQuotesStore();
-        if (!customQuotes.length) {
-          renderActiveQuote();
-          return;
-        }
+        if (!customQuotes.length) { renderActiveQuote(); return; }
         customQuoteIndex = (customQuoteIndex + 1) % customQuotes.length;
       } else {
         stoicQuoteIndex = (stoicQuoteIndex + 1) % stoicQuotes.length;
@@ -1056,12 +1144,7 @@
       const source = quoteAuthorInput.value.trim();
       const quotes = getCustomQuotesStore();
       const editIndex = quoteInput.dataset.editIndex;
-
-      if (!text) {
-        quoteHelper.textContent = 'Add the quote text first.';
-        return;
-      }
-
+      if (!text) { quoteHelper.textContent = 'Add the quote text first.'; return; }
       if (editIndex !== undefined && editIndex !== '') {
         quotes[Number(editIndex)] = { text, source: source || 'Saved quote' };
         quoteHelper.textContent = 'Updated your quote.';
@@ -1069,7 +1152,6 @@
         quotes.push({ text, source: source || 'Saved quote' });
         quoteHelper.textContent = 'Added your quote.';
       }
-
       setCustomQuotesStore(quotes);
       renderCustomQuoteList();
       clearQuoteForm(false);
@@ -1082,9 +1164,7 @@
       quoteAuthorInput.value = '';
       delete quoteInput.dataset.editIndex;
       saveQuoteBtn.textContent = 'Save quote';
-      if (resetStatus) {
-        quoteHelper.textContent = 'Your quotes are saved in this browser. Use My quotes to view them.';
-      }
+      if (resetStatus) quoteHelper.textContent = 'Your quotes are saved in this browser. Use My quotes to view them.';
     }
 
     function editCustomQuote(index) {
@@ -1108,13 +1188,11 @@
       renderCustomQuoteList();
       clearQuoteForm(false);
       quoteHelper.textContent = 'Deleted your quote.';
-      if (quoteMode === 'custom') {
-        customQuoteIndex = 0;
-        renderActiveQuote();
-      }
+      if (quoteMode === 'custom') { customQuoteIndex = 0; renderActiveQuote(); }
       updateQuoteMeta();
     }
 
+    // ── journal ───────────────────────────────────────────────────
     function getJournalStore() {
       const raw = localStorage.getItem('randyQuietSpaceJournalEntries');
       return raw ? JSON.parse(raw) : {};
@@ -1127,17 +1205,14 @@
     function renderJournalEntries() {
       const store = getJournalStore();
       const entries = Object.entries(store).sort((a, b) => b[0].localeCompare(a[0]));
-
       if (!entries.length) {
         journalEntries.innerHTML = '<div class="note"><strong>No saved entries yet</strong><br /><small>Your dated notes will show up here.</small></div>';
         return;
       }
-
       journalEntries.innerHTML = entries.map(([date, text]) => `
         <div class="note">
           <strong>${getPrettyDate(date)}</strong><br />
-          <small>${escapeHtml(text).replace(/
-/g, '<br />')}</small>
+          <small>${escapeHtml(text).replace(/\n/g, '<br />')}</small>
           <div class="entry-actions">
             <button class="entry-btn" type="button" data-action="edit-entry" data-date="${date}">Edit</button>
             <button class="entry-btn" type="button" data-action="delete-entry" data-date="${date}">Delete</button>
@@ -1159,12 +1234,7 @@
       const value = journalText.value.trim();
       const dateKey = journalText.dataset.editDate || getTodayKey();
       const store = getJournalStore();
-
-      if (!value) {
-        saveStatus.textContent = 'Nothing to save yet for this entry.';
-        return;
-      }
-
+      if (!value) { saveStatus.textContent = 'Nothing to save yet for this entry.'; return; }
       store[dateKey] = value;
       setJournalStore(store);
       renderJournalEntries();
@@ -1176,12 +1246,7 @@
       const todayKey = getTodayKey();
       const store = getJournalStore();
       journalText.value = '';
-
-      if (store[todayKey]) {
-        delete store[todayKey];
-        setJournalStore(store);
-      }
-
+      if (store[todayKey]) { delete store[todayKey]; setJournalStore(store); }
       renderJournalEntries();
       saveStatus.textContent = `Cleared entry for ${getPrettyDate(todayKey)}.`;
       delete journalText.dataset.editDate;
@@ -1201,23 +1266,16 @@
       if (!store[dateKey]) return;
       delete store[dateKey];
       setJournalStore(store);
-
-      if (journalText.dataset.editDate === dateKey) {
-        delete journalText.dataset.editDate;
-        journalText.value = '';
-      }
-
-      if (dateKey === getTodayKey()) {
-        journalText.value = '';
-      }
-
+      if (journalText.dataset.editDate === dateKey) { delete journalText.dataset.editDate; journalText.value = ''; }
+      if (dateKey === getTodayKey()) journalText.value = '';
       renderJournalEntries();
       saveStatus.textContent = `Deleted entry for ${getPrettyDate(dateKey)}.`;
     }
 
+    // ── books ─────────────────────────────────────────────────────
     function getBooksStore() {
       const raw = localStorage.getItem('randyQuietSpaceBooks');
-      return raw ? JSON.parse(raw) : [...defaultBooks];
+      return raw ? JSON.parse(raw) : defaultBooks.map(b => ({ ...b }));
     }
 
     function setBooksStore(books) {
@@ -1226,18 +1284,15 @@
 
     function renderBooks() {
       const books = getBooksStore();
-
       if (!books.length) {
         bookList.innerHTML = '<div class="note"><strong>No books yet</strong><br /><small>Add one below and it will live here.</small></div>';
         currentBookTitle.textContent = 'No current book';
         currentBookAuthor.textContent = 'Add a few titles below';
         return;
       }
-
       const currentBook = books.find((book) => book.tag === 'Current anchor') || books[0];
       currentBookTitle.textContent = currentBook.title;
       currentBookAuthor.textContent = currentBook.author;
-
       bookList.innerHTML = books.map((book, index) => `
         <div class="item">
           <div>
@@ -1259,12 +1314,7 @@
       const author = bookAuthorInput.value.trim();
       const books = getBooksStore();
       const editIndex = bookTitleInput.dataset.editIndex;
-
-      if (!title || !author) {
-        bookStatus.textContent = 'Add both a title and an author.';
-        return;
-      }
-
+      if (!title || !author) { bookStatus.textContent = 'Add both a title and an author.'; return; }
       if (editIndex !== undefined && editIndex !== '') {
         const existingTag = books[Number(editIndex)]?.tag || 'Queued';
         books[Number(editIndex)] = { title, author, tag: existingTag };
@@ -1273,7 +1323,6 @@
         books.push({ title, author, tag: 'Queued' });
         bookStatus.textContent = `Added ${title}.`;
       }
-
       setBooksStore(books);
       renderBooks();
       clearBookForm(false);
@@ -1284,9 +1333,7 @@
       bookAuthorInput.value = '';
       delete bookTitleInput.dataset.editIndex;
       saveBookBtn.textContent = 'Save book';
-      if (resetStatus) {
-        bookStatus.textContent = 'Books are saved in this browser. Click Edit on a book to update it.';
-      }
+      if (resetStatus) bookStatus.textContent = 'Books are saved in this browser. Click Edit on a book to update it.';
     }
 
     function editBook(index) {
@@ -1313,29 +1360,99 @@
     }
 
     function makeCurrentBook(index) {
-      const books = getBooksStore().map((book, i) => ({
-        ...book,
-        tag: i === index ? 'Current anchor' : 'Queued'
-      }));
+      const books = getBooksStore().map((book, i) => ({ ...book, tag: i === index ? 'Current anchor' : 'Queued' }));
       setBooksStore(books);
       renderBooks();
       bookStatus.textContent = 'Updated your current book.';
     }
 
+    // ── music want-to-listen ──────────────────────────────────────
+    function getMusicStore() {
+      try { return JSON.parse(localStorage.getItem(MUSIC_KEY)) || []; } catch { return []; }
+    }
+
+    function setMusicStore(items) {
+      localStorage.setItem(MUSIC_KEY, JSON.stringify(items));
+    }
+
+    function musicPillHtml(type) {
+      const labels = { artist: 'Artist', album: 'Album', song: 'Song', playlist: 'Playlist' };
+      return `<span class="music-item-pill pill-${escapeHtml(type)}">${escapeHtml(labels[type] || type)}</span>`;
+    }
+
+    function renderMusicWantList() {
+      const items = getMusicStore();
+      const filtered = musicActiveFilter === 'all' ? items : items.filter(i => i.type === musicActiveFilter);
+
+      if (!filtered.length) {
+        const msg = musicActiveFilter === 'all'
+          ? 'Nothing added yet — use the form above to save music you want to hear.'
+          : `No ${musicActiveFilter}s saved yet.`;
+        musicWantList.innerHTML = `<div class="item"><div><small class="muted">${msg}</small></div></div>`;
+        return;
+      }
+
+      musicWantList.innerHTML = filtered.map((item) => {
+        const realIndex = items.indexOf(item);
+        return `<div class="item">
+          <div style="flex:1;">
+            <strong>${escapeHtml(item.name)}</strong>
+            ${item.note ? `<div class="task-meta">${escapeHtml(item.note)}</div>` : ''}
+          </div>
+          ${musicPillHtml(item.type)}
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="music-btn" type="button" data-music-action="edit" data-music-index="${realIndex}">Edit</button>
+            <button class="music-btn" type="button" data-music-action="listened" data-music-index="${realIndex}">✓ Done</button>
+            <button class="music-btn" type="button" data-music-action="delete" data-music-index="${realIndex}">Remove</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function saveMusic() {
+      const name = musicNameInput.value.trim();
+      const type = musicTypeInput.value;
+      const note = musicNoteInput.value.trim();
+      if (!name) { musicStatus.textContent = 'Add a name first.'; return; }
+      const items = getMusicStore();
+      const editIndex = saveMusicBtn.dataset.editIndex;
+      if (editIndex !== undefined && editIndex !== '') {
+        items[Number(editIndex)] = { name, type, note };
+        musicStatus.textContent = `Updated "${name}".`;
+        delete saveMusicBtn.dataset.editIndex;
+        saveMusicBtn.textContent = 'Add';
+      } else {
+        items.unshift({ name, type, note });
+        musicStatus.textContent = `Added "${name}".`;
+      }
+      setMusicStore(items);
+      renderMusicWantList();
+      clearMusicForm(false);
+    }
+
+    function clearMusicForm(resetStatus = true) {
+      musicNameInput.value = '';
+      musicNoteInput.value = '';
+      musicTypeInput.value = 'artist';
+      delete saveMusicBtn.dataset.editIndex;
+      saveMusicBtn.textContent = 'Add';
+      if (resetStatus) musicStatus.textContent = 'Saved in this browser. Mark as done when you\'ve listened.';
+    }
+
+    // ── search ────────────────────────────────────────────────────
     function filterCards(term) {
       const normalized = term.trim().toLowerCase();
       let visibleCount = 0;
-
       searchableCards.forEach((card) => {
         const text = `${card.textContent} ${card.dataset.title || ''}`.toLowerCase();
         const match = !normalized || text.includes(normalized);
         card.classList.toggle('hidden', !match);
         if (match) visibleCount += 1;
       });
-
       searchEmpty.style.display = !visibleCount ? 'block' : 'none';
     }
 
+    // ── event listeners ───────────────────────────────────────────
     nextQuoteBtn.addEventListener('click', nextQuote);
     nextArtistBtn.addEventListener('click', nextArtist);
     stoicModeBtn.addEventListener('click', () => setQuoteMode('stoic'));
@@ -1343,13 +1460,8 @@
     saveQuoteBtn.addEventListener('click', saveCustomQuote);
     clearQuoteFormBtn.addEventListener('click', () => clearQuoteForm());
 
-    navButtons.forEach((btn) => {
-      btn.addEventListener('click', () => scrollToSection(btn.dataset.target));
-    });
-
-    jumpButtons.forEach((btn) => {
-      btn.addEventListener('click', () => scrollToSection(btn.dataset.target));
-    });
+    navButtons.forEach((btn) => btn.addEventListener('click', () => scrollToSection(btn.dataset.target)));
+    jumpButtons.forEach((btn) => btn.addEventListener('click', () => scrollToSection(btn.dataset.target)));
 
     saveJournalBtn.addEventListener('click', saveJournal);
     clearJournalBtn.addEventListener('click', clearJournal);
@@ -1360,11 +1472,9 @@
       const button = event.target.closest('[data-action]');
       if (!button) return;
       const { action, date } = button.dataset;
-
       if (action === 'edit-entry') loadEntryIntoEditor(date);
       if (action === 'delete-entry') {
-        const confirmed = window.confirm(`Delete the entry for ${getPrettyDate(date)}?`);
-        if (confirmed) deleteJournalEntry(date);
+        if (window.confirm(`Delete the entry for ${getPrettyDate(date)}?`)) deleteJournalEntry(date);
       }
     });
 
@@ -1373,7 +1483,6 @@
       if (!button) return;
       const index = Number(button.dataset.index);
       const { action } = button.dataset;
-
       if (action === 'edit-custom-quote') editCustomQuote(index);
       if (action === 'delete-custom-quote') deleteCustomQuote(index);
     });
@@ -1383,14 +1492,63 @@
       if (!button) return;
       const index = Number(button.dataset.index);
       const { action } = button.dataset;
-
       if (action === 'edit-book') editBook(index);
       if (action === 'delete-book') deleteBook(index);
       if (action === 'anchor-book') makeCurrentBook(index);
     });
 
+    saveMusicBtn.addEventListener('click', saveMusic);
+    clearMusicFormBtn.addEventListener('click', () => clearMusicForm());
+
+    musicWantList.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-music-action]');
+      if (!button) return;
+      const index = Number(button.dataset.musicIndex);
+      const action = button.dataset.musicAction;
+      const items = getMusicStore();
+
+      if (action === 'delete') {
+        const name = items[index]?.name;
+        if (window.confirm(`Remove "${name}" from your list?`)) {
+          items.splice(index, 1);
+          setMusicStore(items);
+          renderMusicWantList();
+          musicStatus.textContent = `Removed "${name}".`;
+        }
+      }
+
+      if (action === 'listened') {
+        const name = items[index]?.name;
+        items.splice(index, 1);
+        setMusicStore(items);
+        renderMusicWantList();
+        musicStatus.textContent = `Marked "${name}" as listened. Enjoy the memory.`;
+      }
+
+      if (action === 'edit') {
+        const item = items[index];
+        if (!item) return;
+        musicNameInput.value = item.name;
+        musicNoteInput.value = item.note || '';
+        musicTypeInput.value = item.type;
+        saveMusicBtn.dataset.editIndex = index;
+        saveMusicBtn.textContent = 'Update';
+        musicStatus.textContent = `Editing "${item.name}".`;
+        musicNameInput.focus();
+      }
+    });
+
+    musicFilterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        musicActiveFilter = btn.dataset.filter;
+        musicFilterBtns.forEach(b => b.classList.toggle('active', b === btn));
+        renderMusicWantList();
+      });
+    });
+
     searchInput.addEventListener('input', (event) => filterCards(event.target.value));
 
+    // ── init ──────────────────────────────────────────────────────
     renderArtist(artistIndex);
     loadTodayJournal();
     renderJournalEntries();
@@ -1398,6 +1556,7 @@
     renderCustomQuoteList();
     updateQuoteMeta();
     renderActiveQuote();
+    renderMusicWantList();
   </script>
 </body>
 </html>
