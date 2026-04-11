@@ -87,7 +87,8 @@
     .soft-text,
     .search-empty,
     .save-status,
-    .book-helper {
+    .book-helper,
+    .quote-helper {
       color: var(--muted);
     }
 
@@ -154,7 +155,8 @@
     .note,
     .table-wrap,
     .journal-box,
-    .book-box {
+    .book-box,
+    .quote-box {
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -166,11 +168,10 @@
     .card { padding: 22px; }
     .mini { padding: 18px; }
     .journal-box,
-    .book-box { padding: 18px; margin-top: 14px; }
+    .book-box,
+    .quote-box { padding: 18px; margin-top: 14px; }
 
-    .section {
-      scroll-margin-top: 28px;
-    }
+    .section { scroll-margin-top: 28px; }
 
     .headline {
       font-size: clamp(1.9rem, 3vw, 3rem);
@@ -229,7 +230,6 @@
 
     .span-4 { grid-column: span 4; }
     .span-5 { grid-column: span 5; }
-    .span-6 { grid-column: span 6; }
     .span-7 { grid-column: span 7; }
     .span-8 { grid-column: span 8; }
     .span-12 { grid-column: span 12; }
@@ -239,22 +239,6 @@
       font-weight: 800;
       margin: 10px 0 4px;
       line-height: 1.15;
-    }
-
-    .progress {
-      width: 100%;
-      height: 10px;
-      background: rgba(167, 243, 208, 0.1);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 14px;
-    }
-
-    .progress > span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
     }
 
     .list {
@@ -281,7 +265,8 @@
 
     .item.hidden,
     .card.hidden,
-    .table-wrap.hidden {
+    .table-wrap.hidden,
+    .panel.hidden {
       display: none;
     }
 
@@ -331,7 +316,8 @@
 
     .search input,
     textarea,
-    .book-input {
+    .book-input,
+    .quote-input {
       width: 100%;
       background: rgba(6, 12, 12, 0.46);
       color: var(--text);
@@ -376,7 +362,9 @@
 
     .save-row,
     .entry-actions,
-    .book-actions {
+    .book-actions,
+    .quote-actions,
+    .quote-tabs {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -390,7 +378,9 @@
     }
 
     .entry-btn,
-    .book-btn {
+    .book-btn,
+    .quote-btn,
+    .tab-btn {
       border: 1px solid var(--border);
       background: rgba(167, 243, 208, 0.06);
       color: var(--text);
@@ -403,18 +393,31 @@
 
     .entry-btn:hover,
     .book-btn:hover,
+    .quote-btn:hover,
+    .tab-btn:hover,
     .link-item:hover {
       border-color: rgba(125, 211, 199, 0.24);
     }
 
-    .book-grid {
+    .tab-btn.active {
+      background: rgba(125, 211, 199, 0.12);
+      border-color: rgba(125, 211, 199, 0.22);
+    }
+
+    .book-grid,
+    .quote-grid {
       display: grid;
       gap: 10px;
       grid-template-columns: 1.4fr 1fr auto;
       margin-top: 12px;
     }
 
-    .book-helper {
+    .quote-grid {
+      grid-template-columns: 1.6fr 1fr auto;
+    }
+
+    .book-helper,
+    .quote-helper {
       font-size: 0.9rem;
       margin-top: 10px;
     }
@@ -474,14 +477,14 @@
       }
       .hero,
       .status-grid { grid-template-columns: 1fr; }
-      .span-4, .span-5, .span-6, .span-7, .span-8, .span-12, .table-wrap { grid-column: span 12; }
+      .span-4, .span-5, .span-7, .span-8, .span-12, .table-wrap { grid-column: span 12; }
     }
 
     @media (max-width: 640px) {
       .main { padding: 18px; }
-      .panel, .card, .mini, .table-wrap, .book-box, .journal-box { padding: 18px; }
+      .panel, .card, .mini, .table-wrap, .book-box, .journal-box, .quote-box { padding: 18px; }
       .search { min-width: 100%; }
-      .book-grid { grid-template-columns: 1fr; }
+      .book-grid, .quote-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -520,7 +523,7 @@
     </aside>
 
     <main class="main">
-      <div class="topbar section" id="overview" data-title="overview quiet dashboard calm reading music travel journal">
+      <div class="topbar section" id="overview" data-title="overview quiet dashboard calm reading music travel journal quotes stoic">
         <div>
           <div class="section-tag">Quiet dashboard</div>
           <h2 style="margin:0; font-size: 1.4rem;">Welcome back, Randy</h2>
@@ -534,24 +537,24 @@
       <div id="search-empty" class="search-empty">Nothing matched that search. Try a book, artist, mood, trip, or note idea.</div>
 
       <section class="hero section" data-title="overview intro welcome calm dashboard">
-        <div class="panel searchable-card" data-title="overview calm space read plan breathe goals music notes saving">
+        <div class="panel searchable-card" data-title="overview calm space read plan breathe goals music notes saving stoic quotes">
           <div class="section-tag">Overview</div>
           <h1 class="headline">A calmer space to think, read, plan, and breathe.</h1>
-          <p class="muted">This version shifts the dashboard away from bill pressure and into something more useful day to day: books, travel, notes, goals, music, and a steady focus on saving without all the financial noise.</p>
+          <p class="muted">This version shifts the dashboard away from bill pressure and into something more useful day to day: books, travel, notes, goals, music, your own quotes, and a stoic feed for steady perspective.</p>
           <div class="hero-actions">
             <button class="btn btn-primary quick-jump" data-target="reading">Open reading list</button>
-            <button class="btn btn-secondary quick-jump" data-target="music">Open music space</button>
+            <button class="btn btn-secondary quick-jump" data-target="reflection">Open quotes</button>
             <button class="btn btn-secondary quick-jump" data-target="journal">Open journal</button>
           </div>
         </div>
 
-        <div class="panel searchable-card" data-title="right now currently reading reflection music rotation">
+        <div class="panel searchable-card" data-title="right now currently reading reflection music rotation stoic quote mode">
           <div class="split">
             <div>
               <div class="section-tag">Right now</div>
               <h2 style="margin:0;">Gentle snapshot</h2>
             </div>
-            <span class="pill">5 living spaces</span>
+            <span class="pill">6 living spaces</span>
           </div>
           <div class="mini-grid">
             <div class="mini">
@@ -560,13 +563,13 @@
               <small class="muted" id="current-book-author">John Steinbeck</small>
             </div>
             <div class="mini" style="margin-top: 14px;">
-              <p>Reflection</p>
-              <div class="kpi">Stay present</div>
-              <small class="muted">Less noise. More clarity. More room to breathe.</small>
+              <p>Quote mode</p>
+              <div class="kpi" id="quote-mode-label">Stoic feed</div>
+              <small class="muted">Switch between your saved quotes and built-in stoic reflections</small>
             </div>
             <div class="mini" style="margin-top: 14px;">
               <p>Music rotation</p>
-              <div class="kpi" id="music-rotation-count">4</div>
+              <div class="kpi" id="music-rotation-count">6</div>
               <small class="muted">Artists, albums, and things worth revisiting</small>
             </div>
           </div>
@@ -574,13 +577,36 @@
       </section>
 
       <section class="status-grid">
-        <div class="card searchable-card section" id="reflection" data-title="quote reflection hemingway stillness calm perspective">
+        <div class="card searchable-card section" id="reflection" data-title="quote reflection stoic quotes personal quotes marcus aurelius seneca epictetus">
           <h3>Quote / reflection</h3>
+          <div class="quote-tabs">
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="tab-btn active" id="stoic-mode-btn" type="button">Stoic feed</button>
+              <button class="tab-btn" id="custom-mode-btn" type="button">My quotes</button>
+            </div>
+            <span class="pill" id="quote-count-pill">8 stoic quotes</span>
+          </div>
           <div class="quote" id="quote-text"></div>
           <div class="quote-source" id="quote-source"></div>
           <div class="save-row">
-            <div class="footer-note">A quieter, more reflective direction is shaping the space.</div>
-            <button class="btn btn-secondary" id="next-quote-btn" type="button">New quote</button>
+            <div class="footer-note" id="quote-status">A quieter, steadier perspective is shaping the space.</div>
+            <button class="btn btn-secondary" id="next-quote-btn" type="button">Next quote</button>
+          </div>
+          <div class="quote-box">
+            <div class="soft-text" style="margin-bottom:10px;">Add a quote you like</div>
+            <div class="quote-grid">
+              <textarea id="quote-input" class="quote-input" placeholder="Paste or type a quote you want to keep..."></textarea>
+              <input id="quote-author-input" class="quote-input" type="text" placeholder="Author / source" />
+              <button id="save-quote-btn" class="btn btn-secondary" type="button">Save quote</button>
+            </div>
+            <div class="quote-actions">
+              <div id="quote-helper" class="quote-helper">Your quotes are saved in this browser. Use My quotes to view them.</div>
+              <button id="clear-quote-form-btn" class="quote-btn" type="button">Clear form</button>
+            </div>
+          </div>
+          <div class="quote-box">
+            <div class="soft-text" style="margin-bottom:10px;">Saved personal quotes</div>
+            <div id="custom-quote-list" class="notes"></div>
           </div>
         </div>
 
@@ -623,7 +649,6 @@
           <div class="section-tag">Reading + reset</div>
           <h3>Book list</h3>
           <div id="book-list" class="list"></div>
-
           <div class="book-box">
             <div class="soft-text" style="margin-bottom:10px;">Edit reading list</div>
             <div class="book-grid">
@@ -679,7 +704,6 @@
               <small>A section for ideas, reflections, and the things we talk through that matter over time.</small>
             </div>
           </div>
-
           <div class="journal-box">
             <div class="soft-text" style="margin-bottom:10px;">Journal entry area</div>
             <textarea id="journal-text" placeholder="Write whatever is on your mind..."></textarea>
@@ -691,7 +715,6 @@
               </div>
             </div>
           </div>
-
           <div class="journal-box" style="margin-top:14px;">
             <div class="soft-text" style="margin-bottom:10px;">Saved entries</div>
             <div id="journal-entries" class="notes"></div>
@@ -833,27 +856,15 @@
   </div>
 
   <script>
-    const quotes = [
-      {
-        text: 'The world breaks everyone and afterward many are strong at the broken places.',
-        source: 'Ernest Hemingway'
-      },
-      {
-        text: 'And the men who hold high places must be the ones who start to mold a new reality closer to the heart.',
-        source: 'Rush'
-      },
-      {
-        text: 'To live is the rarest thing in the world. Most people exist, that is all.',
-        source: 'Oscar Wilde'
-      },
-      {
-        text: 'The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.',
-        source: 'Albert Camus'
-      },
-      {
-        text: 'You can do anything you want to do, but you have to work at it.',
-        source: 'Neil Peart'
-      }
+    const stoicQuotes = [
+      { text: 'You have power over your mind — not outside events. Realize this, and you will find strength.', source: 'Marcus Aurelius' },
+      { text: 'We suffer more often in imagination than in reality.', source: 'Seneca' },
+      { text: 'It is not things themselves that disturb us, but our judgments about them.', source: 'Epictetus' },
+      { text: 'Waste no more time arguing what a good man should be. Be one.', source: 'Marcus Aurelius' },
+      { text: 'He who fears death will never do anything worthy of a living man.', source: 'Seneca' },
+      { text: 'Make the best use of what is in your power, and take the rest as it happens.', source: 'Epictetus' },
+      { text: 'The happiness of your life depends upon the quality of your thoughts.', source: 'Marcus Aurelius' },
+      { text: 'Luck is what happens when preparation meets opportunity.', source: 'Seneca' }
     ];
 
     const artists = [
@@ -874,12 +885,26 @@
       { title: 'East of Eden', author: 'John Steinbeck', tag: 'Current anchor' }
     ];
 
-    let quoteIndex = 0;
+    let stoicQuoteIndex = 0;
+    let customQuoteIndex = 0;
     let artistIndex = 0;
+    let quoteMode = 'stoic';
 
     const quoteText = document.getElementById('quote-text');
     const quoteSource = document.getElementById('quote-source');
     const nextQuoteBtn = document.getElementById('next-quote-btn');
+    const stoicModeBtn = document.getElementById('stoic-mode-btn');
+    const customModeBtn = document.getElementById('custom-mode-btn');
+    const quoteStatus = document.getElementById('quote-status');
+    const quoteCountPill = document.getElementById('quote-count-pill');
+    const quoteModeLabel = document.getElementById('quote-mode-label');
+    const quoteInput = document.getElementById('quote-input');
+    const quoteAuthorInput = document.getElementById('quote-author-input');
+    const saveQuoteBtn = document.getElementById('save-quote-btn');
+    const clearQuoteFormBtn = document.getElementById('clear-quote-form-btn');
+    const quoteHelper = document.getElementById('quote-helper');
+    const customQuoteList = document.getElementById('custom-quote-list');
+
     const currentListeningText = document.getElementById('current-listening-text');
     const nextArtistBtn = document.getElementById('next-artist-btn');
     const musicRotationCount = document.getElementById('music-rotation-count');
@@ -905,25 +930,13 @@
     const jumpButtons = document.querySelectorAll('.quick-jump');
     const searchableCards = document.querySelectorAll('.searchable-card');
 
-    function renderQuote(index) {
-      const quote = quotes[index];
-      quoteText.textContent = `“${quote.text}”`;
-      quoteSource.textContent = quote.source;
-    }
-
-    function nextQuote() {
-      quoteIndex = (quoteIndex + 1) % quotes.length;
-      renderQuote(quoteIndex);
-    }
-
-    function renderArtist(index) {
-      currentListeningText.textContent = artists[index];
-      musicRotationCount.textContent = artists.length;
-    }
-
-    function nextArtist() {
-      artistIndex = (artistIndex + 1) % artists.length;
-      renderArtist(artistIndex);
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function scrollToSection(targetId) {
@@ -947,13 +960,159 @@
       });
     }
 
-    function escapeHtml(value) {
-      return value
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
+    function renderArtist(index) {
+      currentListeningText.textContent = artists[index];
+      musicRotationCount.textContent = artists.length;
+    }
+
+    function nextArtist() {
+      artistIndex = (artistIndex + 1) % artists.length;
+      renderArtist(artistIndex);
+    }
+
+    function getCustomQuotesStore() {
+      const raw = localStorage.getItem('randyQuietSpaceCustomQuotes');
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    function setCustomQuotesStore(quotes) {
+      localStorage.setItem('randyQuietSpaceCustomQuotes', JSON.stringify(quotes));
+    }
+
+    function renderCustomQuoteList() {
+      const customQuotes = getCustomQuotesStore();
+
+      if (!customQuotes.length) {
+        customQuoteList.innerHTML = '<div class="note"><strong>No personal quotes yet</strong><br /><small>Add one above and it will show up here.</small></div>';
+        return;
+      }
+
+      customQuoteList.innerHTML = customQuotes.map((quote, index) => `
+        <div class="note">
+          <strong>${escapeHtml(quote.source || 'Unknown source')}</strong><br />
+          <small>${escapeHtml(quote.text)}</small>
+          <div class="entry-actions">
+            <button class="entry-btn" type="button" data-action="edit-custom-quote" data-index="${index}">Edit</button>
+            <button class="entry-btn" type="button" data-action="delete-custom-quote" data-index="${index}">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateQuoteMeta() {
+      const customCount = getCustomQuotesStore().length;
+      quoteCountPill.textContent = quoteMode === 'stoic' ? `${stoicQuotes.length} stoic quotes` : `${customCount} personal quotes`;
+      quoteModeLabel.textContent = quoteMode === 'stoic' ? 'Stoic feed' : 'My quotes';
+      stoicModeBtn.classList.toggle('active', quoteMode === 'stoic');
+      customModeBtn.classList.toggle('active', quoteMode === 'custom');
+    }
+
+    function renderActiveQuote() {
+      const customQuotes = getCustomQuotesStore();
+      let activeQuote;
+
+      if (quoteMode === 'custom' && customQuotes.length) {
+        customQuoteIndex = customQuoteIndex % customQuotes.length;
+        activeQuote = customQuotes[customQuoteIndex];
+        quoteStatus.textContent = 'Showing one of your saved personal quotes.';
+      } else if (quoteMode === 'custom' && !customQuotes.length) {
+        quoteText.textContent = '“Add a quote you like and it will appear here.”';
+        quoteSource.textContent = 'Your Quiet Space';
+        quoteStatus.textContent = 'No personal quotes yet — stoic feed is still ready when you want it.';
+        updateQuoteMeta();
+        return;
+      } else {
+        stoicQuoteIndex = stoicQuoteIndex % stoicQuotes.length;
+        activeQuote = stoicQuotes[stoicQuoteIndex];
+        quoteStatus.textContent = 'Showing a built-in stoic quote for steadier perspective.';
+      }
+
+      quoteText.textContent = `“${activeQuote.text}”`;
+      quoteSource.textContent = activeQuote.source;
+      updateQuoteMeta();
+    }
+
+    function nextQuote() {
+      if (quoteMode === 'custom') {
+        const customQuotes = getCustomQuotesStore();
+        if (!customQuotes.length) {
+          renderActiveQuote();
+          return;
+        }
+        customQuoteIndex = (customQuoteIndex + 1) % customQuotes.length;
+      } else {
+        stoicQuoteIndex = (stoicQuoteIndex + 1) % stoicQuotes.length;
+      }
+      renderActiveQuote();
+    }
+
+    function setQuoteMode(mode) {
+      quoteMode = mode;
+      renderActiveQuote();
+    }
+
+    function saveCustomQuote() {
+      const text = quoteInput.value.trim();
+      const source = quoteAuthorInput.value.trim();
+      const quotes = getCustomQuotesStore();
+      const editIndex = quoteInput.dataset.editIndex;
+
+      if (!text) {
+        quoteHelper.textContent = 'Add the quote text first.';
+        return;
+      }
+
+      if (editIndex !== undefined && editIndex !== '') {
+        quotes[Number(editIndex)] = { text, source: source || 'Saved quote' };
+        quoteHelper.textContent = 'Updated your quote.';
+      } else {
+        quotes.push({ text, source: source || 'Saved quote' });
+        quoteHelper.textContent = 'Added your quote.';
+      }
+
+      setCustomQuotesStore(quotes);
+      renderCustomQuoteList();
+      clearQuoteForm(false);
+      if (quoteMode === 'custom') renderActiveQuote();
+      updateQuoteMeta();
+    }
+
+    function clearQuoteForm(resetStatus = true) {
+      quoteInput.value = '';
+      quoteAuthorInput.value = '';
+      delete quoteInput.dataset.editIndex;
+      saveQuoteBtn.textContent = 'Save quote';
+      if (resetStatus) {
+        quoteHelper.textContent = 'Your quotes are saved in this browser. Use My quotes to view them.';
+      }
+    }
+
+    function editCustomQuote(index) {
+      const quotes = getCustomQuotesStore();
+      const quote = quotes[index];
+      if (!quote) return;
+      quoteInput.value = quote.text;
+      quoteAuthorInput.value = quote.source || '';
+      quoteInput.dataset.editIndex = index;
+      saveQuoteBtn.textContent = 'Update quote';
+      quoteHelper.textContent = 'Editing your saved quote.';
+      quoteInput.focus();
+    }
+
+    function deleteCustomQuote(index) {
+      const quotes = getCustomQuotesStore();
+      const quote = quotes[index];
+      if (!quote) return;
+      quotes.splice(index, 1);
+      setCustomQuotesStore(quotes);
+      renderCustomQuoteList();
+      clearQuoteForm(false);
+      quoteHelper.textContent = 'Deleted your quote.';
+      if (quoteMode === 'custom') {
+        customQuoteIndex = 0;
+        renderActiveQuote();
+      }
+      updateQuoteMeta();
     }
 
     function getJournalStore() {
@@ -977,7 +1136,8 @@
       journalEntries.innerHTML = entries.map(([date, text]) => `
         <div class="note">
           <strong>${getPrettyDate(date)}</strong><br />
-          <small>${escapeHtml(text).replace(/\n/g, '<br />')}</small>
+          <small>${escapeHtml(text).replace(/
+/g, '<br />')}</small>
           <div class="entry-actions">
             <button class="entry-btn" type="button" data-action="edit-entry" data-date="${date}">Edit</button>
             <button class="entry-btn" type="button" data-action="delete-entry" data-date="${date}">Delete</button>
@@ -1039,7 +1199,6 @@
     function deleteJournalEntry(dateKey) {
       const store = getJournalStore();
       if (!store[dateKey]) return;
-
       delete store[dateKey];
       setJournalStore(store);
 
@@ -1125,7 +1284,6 @@
       bookAuthorInput.value = '';
       delete bookTitleInput.dataset.editIndex;
       saveBookBtn.textContent = 'Save book';
-
       if (resetStatus) {
         bookStatus.textContent = 'Books are saved in this browser. Click Edit on a book to update it.';
       }
@@ -1135,7 +1293,6 @@
       const books = getBooksStore();
       const book = books[index];
       if (!book) return;
-
       bookTitleInput.value = book.title;
       bookAuthorInput.value = book.author;
       bookTitleInput.dataset.editIndex = index;
@@ -1148,7 +1305,6 @@
       const books = getBooksStore();
       const book = books[index];
       if (!book) return;
-
       books.splice(index, 1);
       setBooksStore(books);
       renderBooks();
@@ -1161,7 +1317,6 @@
         ...book,
         tag: i === index ? 'Current anchor' : 'Queued'
       }));
-
       setBooksStore(books);
       renderBooks();
       bookStatus.textContent = 'Updated your current book.';
@@ -1183,6 +1338,10 @@
 
     nextQuoteBtn.addEventListener('click', nextQuote);
     nextArtistBtn.addEventListener('click', nextArtist);
+    stoicModeBtn.addEventListener('click', () => setQuoteMode('stoic'));
+    customModeBtn.addEventListener('click', () => setQuoteMode('custom'));
+    saveQuoteBtn.addEventListener('click', saveCustomQuote);
+    clearQuoteFormBtn.addEventListener('click', () => clearQuoteForm());
 
     navButtons.forEach((btn) => {
       btn.addEventListener('click', () => scrollToSection(btn.dataset.target));
@@ -1200,23 +1359,28 @@
     journalEntries.addEventListener('click', (event) => {
       const button = event.target.closest('[data-action]');
       if (!button) return;
-
       const { action, date } = button.dataset;
 
-      if (action === 'edit-entry') {
-        loadEntryIntoEditor(date);
-      }
-
+      if (action === 'edit-entry') loadEntryIntoEditor(date);
       if (action === 'delete-entry') {
         const confirmed = window.confirm(`Delete the entry for ${getPrettyDate(date)}?`);
         if (confirmed) deleteJournalEntry(date);
       }
     });
 
+    customQuoteList.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const index = Number(button.dataset.index);
+      const { action } = button.dataset;
+
+      if (action === 'edit-custom-quote') editCustomQuote(index);
+      if (action === 'delete-custom-quote') deleteCustomQuote(index);
+    });
+
     bookList.addEventListener('click', (event) => {
       const button = event.target.closest('[data-action]');
       if (!button) return;
-
       const index = Number(button.dataset.index);
       const { action } = button.dataset;
 
@@ -1227,11 +1391,13 @@
 
     searchInput.addEventListener('input', (event) => filterCards(event.target.value));
 
-    renderQuote(quoteIndex);
     renderArtist(artistIndex);
     loadTodayJournal();
     renderJournalEntries();
     renderBooks();
+    renderCustomQuoteList();
+    updateQuoteMeta();
+    renderActiveQuote();
   </script>
 </body>
 </html>
