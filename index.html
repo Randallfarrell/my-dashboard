@@ -375,7 +375,6 @@
     }
 
     .save-row,
-    .book-form,
     .entry-actions,
     .book-actions {
       display: flex;
@@ -624,6 +623,7 @@
           <div class="section-tag">Reading + reset</div>
           <h3>Book list</h3>
           <div id="book-list" class="list"></div>
+
           <div class="book-box">
             <div class="soft-text" style="margin-bottom:10px;">Edit reading list</div>
             <div class="book-grid">
@@ -679,6 +679,7 @@
               <small>A section for ideas, reflections, and the things we talk through that matter over time.</small>
             </div>
           </div>
+
           <div class="journal-box">
             <div class="soft-text" style="margin-bottom:10px;">Journal entry area</div>
             <textarea id="journal-text" placeholder="Write whatever is on your mind..."></textarea>
@@ -690,6 +691,7 @@
               </div>
             </div>
           </div>
+
           <div class="journal-box" style="margin-top:14px;">
             <div class="soft-text" style="margin-bottom:10px;">Saved entries</div>
             <div id="journal-entries" class="notes"></div>
@@ -945,6 +947,15 @@
       });
     }
 
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function getJournalStore() {
       const raw = localStorage.getItem('randyQuietSpaceJournalEntries');
       return raw ? JSON.parse(raw) : {};
@@ -966,8 +977,7 @@
       journalEntries.innerHTML = entries.map(([date, text]) => `
         <div class="note">
           <strong>${getPrettyDate(date)}</strong><br />
-          <small>${escapeHtml(text).replace(/
-/g, '<br />')}</small>
+          <small>${escapeHtml(text).replace(/\n/g, '<br />')}</small>
           <div class="entry-actions">
             <button class="entry-btn" type="button" data-action="edit-entry" data-date="${date}">Edit</button>
             <button class="entry-btn" type="button" data-action="delete-entry" data-date="${date}">Delete</button>
@@ -1029,6 +1039,7 @@
     function deleteJournalEntry(dateKey) {
       const store = getJournalStore();
       if (!store[dateKey]) return;
+
       delete store[dateKey];
       setJournalStore(store);
 
@@ -1047,20 +1058,11 @@
 
     function getBooksStore() {
       const raw = localStorage.getItem('randyQuietSpaceBooks');
-      return raw ? JSON.parse(raw) : defaultBooks;
+      return raw ? JSON.parse(raw) : [...defaultBooks];
     }
 
     function setBooksStore(books) {
       localStorage.setItem('randyQuietSpaceBooks', JSON.stringify(books));
-    }
-
-    function escapeHtml(value) {
-      return value
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
     }
 
     function renderBooks() {
@@ -1123,6 +1125,7 @@
       bookAuthorInput.value = '';
       delete bookTitleInput.dataset.editIndex;
       saveBookBtn.textContent = 'Save book';
+
       if (resetStatus) {
         bookStatus.textContent = 'Books are saved in this browser. Click Edit on a book to update it.';
       }
@@ -1132,6 +1135,7 @@
       const books = getBooksStore();
       const book = books[index];
       if (!book) return;
+
       bookTitleInput.value = book.title;
       bookAuthorInput.value = book.author;
       bookTitleInput.dataset.editIndex = index;
@@ -1144,6 +1148,7 @@
       const books = getBooksStore();
       const book = books[index];
       if (!book) return;
+
       books.splice(index, 1);
       setBooksStore(books);
       renderBooks();
@@ -1156,9 +1161,10 @@
         ...book,
         tag: i === index ? 'Current anchor' : 'Queued'
       }));
+
       setBooksStore(books);
       renderBooks();
-      bookStatus.textContent = `Updated your current book.`;
+      bookStatus.textContent = 'Updated your current book.';
     }
 
     function filterCards(term) {
@@ -1194,6 +1200,7 @@
     journalEntries.addEventListener('click', (event) => {
       const button = event.target.closest('[data-action]');
       if (!button) return;
+
       const { action, date } = button.dataset;
 
       if (action === 'edit-entry') {
@@ -1209,6 +1216,7 @@
     bookList.addEventListener('click', (event) => {
       const button = event.target.closest('[data-action]');
       if (!button) return;
+
       const index = Number(button.dataset.index);
       const { action } = button.dataset;
 
